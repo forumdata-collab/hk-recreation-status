@@ -314,12 +314,12 @@ function renderSportGround(){
    if(!slots||!slots.length) return 'closed';
    const nowM=hkNow().getHours()*60+hkNow().getMinutes();
    const cur=slots.find(x=>{const m=x.time.match(/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/);if(!m)return false;const s=parseInt(m[1])*60+parseInt(m[2]),e=parseInt(m[3])*60+parseInt(m[4]);return nowM>=s&&nowM<e;});
-   if(!cur) return 'closed'; // 無現行時段 = 已休館
+   if(!cur) return 'closed'; // 無現行時段 = 是日已結束
    return(cur.code==='A'||cur.code==='L')?'open':'closed';
  }
  const mNow=fieldNow(sd.mainField), sNow=fieldNow(sd.secondaryField);
  let overall;
- if(mNow==='closed'&&sNow==='closed') overall={text:t('closed_today'),cls:'status-suspended'};
+ if(mNow==='closed'&&sNow==='closed') overall={text:t('closed'),cls:'status-closed'}; // 休館（是日結束）
  else if(mNow==='open'&&sNow==='open') overall={text:t('open'),cls:'status-open'};
  else overall={text:t('partial'),cls:'status-partial'};
  if(sd.closures&&sd.closures.length) overall=overallMap.closed;
