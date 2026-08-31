@@ -300,6 +300,93 @@ function renderLibraries(){
 
 let rvmData=null;
 async function loadRVM(){try{const r=await fetch('rvm_status.json');if(r.ok)rvmData=await r.json();}catch(e){}renderAll();}
+let sportGroundData=null;
+async function loadSportGround(){
+ try{const r=await fetch('sport_ground_status.json?v='+Date.now());if(r.ok)sportGroundData=await r.json();}catch(e){}
+ renderAll();
+}
+function renderSportGround(){
+ if(!sportGroundData) return '<div class="notice">載入中... / Loading...</div>';
+ const sd=sportGroundData;
+ const overallMap={open:{cls:'status-open',text:t('open')},partial:{cls:'status-partial',text:t('partial')},closed:{cls:'status-suspended',text:t('closed_today')},unknown:{cls:'status-closed',text:t('closed')}};
+ // 即時計算 overall：依目前時間兩場地嘅 code 推導（唔用 sync 時嘅靜態值）
+ function fieldNow(slots){
+   if(!slots||!slots.length) return 'closed';
+   const nowM=hkNow().getHours()*60+hkNow().getMinutes();
+   const cur=slots.find(x=>{const m=x.time.match(/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/);if(!m)return false;const s=parseInt(m[1])*60+parseInt(m[2]),e=parseInt(m[3])*60+parseInt(m[4]);return nowM>=s&&nowM<e;});
+   if(!cur) return 'closed'; // 無現行時段 = 已休館
+   return(cur.code==='A'||cur.code==='L')?'open':'closed';
+ }
+ const mNow=fieldNow(sd.mainField), sNow=fieldNow(sd.secondaryField);
+ let overall;
+ if(mNow==='closed'&&sNow==='closed') overall={text:t('closed_today'),cls:'status-suspended'};
+ else if(mNow==='open'&&sNow==='open') overall={text:t('open'),cls:'status-open'};
+ else overall={text:t('partial'),cls:'status-partial'};
+ if(sd.closures&&sd.closures.length) overall=overallMap.closed;
+ // Helper: code → CSS class (M=dark red, B=light red)
+ const codeClsMap={A:'code-a',L:'code-l',B:'code-b',M:'code-m'};
+ const codeZh={A:'開放',L:'部分線道',B:'預訂暫停',M:'關閉'};
+ const codeEn={A:'Open',L:'Limited',B:'Booking',M:'Closed'};
+ const isZh=currentLang==='zh', isEn=currentLang==='en';
+ function codeTag(c,timeStr,isToday){
+   if(!c) return '';
+   let txt=isZh?(codeZh[c]||c):isEn?(codeEn[c]||c):(codeZh[c]||c);
+   // compute real-time current/expired from client clock — only today column breathes/greys
+   if(timeStr && isToday){
+     let m2=timeStr.match(/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/);
+     if(m2){
+       let sH=parseInt(m2[1])*60+parseInt(m2[2]), eH=parseInt(m2[3])*60+parseInt(m2[4]);
+       let nowM=hkNow().getHours()*60+hkNow().getMinutes();
+       if(nowM>=sH && nowM<eH && (c==='A'||c==='L')) return `<span class="code-a-active">${txt}</span>`;
+       if(nowM>=eH && (c==='A'||c==='L')) return `<span class="code-expired">${t("expiredLabel")}</span>`;
+     }
+   }
+   let cls=codeClsMap[c]||'code-a';
+   return `<span class="${cls}">${txt}</span>`;
+ }
+ // Build today+tomorrow grid
+ let tmLabel=isZh?' tomorrow':(isEn?' tomorrow':'明日');
+ let todayLabel=(sd.todayDate||'today').replace(/^\d{4}\//,'');
+ let tomLabel=(sd.tomorrowDate||'').replace(/^\d{4}\//,'');
+ let header=`<div style="display:grid;grid-template-columns:80px 1fr 1fr 1fr 1fr;gap:4px;margin-bottom:8px;font-size:.65rem;color:#94a3b8;text-align:center"><div>⏰</div><div style="border-bottom:2px solid #0ea5e9;padding:4px">🏟️ ${t("mainField")}</div><div style="border-bottom:2px solid #0ea5e9;padding:4px">⚽ ${t("secField")}</div><div style="border-bottom:2px solid #94a3b8;padding:4px">🏟️ ${t("mainField")}</div><div style="border-bottom:2px solid #94a3b8;padding:4px">⚽ ${t("secField")}</div></div><div style="display:grid;grid-template-columns:80px 1fr 1fr 1fr 1fr;gap:4px;margin-bottom:6px;font-size:.60rem;color:#94a3b8;text-align:center"><div></div><div style="color:#0ea5e9">${todayLabel} ${t("todayLabel")}</div><div style="color:#0ea5e9">${todayLabel} ${t("todayLabel")}</div><div style="color:#94a3b8">${tomLabel} ${t("tomorrowLabel")}</div><div style="color:#94a3b8">${tomLabel} ${t("tomorrowLabel")}</div></div>`;
+ let allTimes=[...new Set([...(sd.mainField||[]).map(x=>x.time), ...(sd.secondaryField||[]).map(x=>x.time)])].sort();
+ let tm=new Map();
+ (sd.mainField||[]).forEach(x=> tm.set('m:'+x.time, x));
+ (sd.secondaryField||[]).forEach(x=> tm.set('s:'+x.time, x));
+ let grid='';
+ // Build tomorrow maps
+ let tm2=new Map();
+ (sd.mainFieldTomorrow||[]).forEach(x=> tm2.set('m:'+x.time, x));
+ (sd.secondaryFieldTomorrow||[]).forEach(x=> tm2.set('s:'+x.time, x));
+ allTimes.forEach(ts=>{
+   let mm=tm.get('m:'+ts), ss=tm.get('s:'+ts);
+   let mm2=tm2.get('m:'+ts), ss2=tm2.get('s:'+ts);
+   // real-time is_current from client clock (today only)
+   let sH, eH, nowM, cur=false;
+   let mm2t=ts.match(/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/);
+   if(mm2t){ sH=parseInt(mm2t[1])*60+parseInt(mm2t[2]); eH=parseInt(mm2t[3])*60+parseInt(mm2t[4]); nowM=hkNow().getHours()*60+hkNow().getMinutes(); cur=nowM>=sH && nowM<eH; }
+   let hl=cur?'background:#f0fdf4;border-radius:6px;padding:2px 4px;margin:1px 0':'';
+   grid+=`<div style="display:grid;grid-template-columns:80px 1fr 1fr 1fr 1fr;gap:6px;padding:4px 0;border-bottom:1px solid #f1f5f9;font-size:.72rem;align-items:center;${hl}"><span style="color:#475569;font-size:.70rem;white-space:nowrap">${ts}</span><span style="text-align:center">${codeTag(mm?mm.code:'',ts,true)}</span><span style="text-align:center">${codeTag(ss?ss.code:'',ts,true)}</span><span style="text-align:center">${codeTag(mm2?mm2.code:'',null,false)}</span><span style="text-align:center">${codeTag(ss2?ss2.code:'',null,false)}</span></div>`;
+ });
+ // Legend
+ let legend='<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:.68rem;color:#64748b"><span class="code-a" style="display:inline-flex;align-items:center;gap:3px">A 開放</span><span class="code-l" style="display:inline-flex;align-items:center;gap:3px">L 部分線道</span><span class="code-b" style="display:inline-flex;align-items:center;gap:3px">B 預訂暫停</span><span class="code-m" style="display:inline-flex;align-items:center;gap:3px">M 關閉</span></div>';
+ // Closures
+ let closures=(sd.closures||[]).map(c=>`<div class="notice" style="border-left:4px solid #dc2626">⚠️ ${t('closure')} — ${c.facilities||''} ${c.reason||''} ${c.time||''}</div>`).join('');
+ // 定期保養日恆常告示
+ let maintInfo='';
+ if(sd.maintenance){
+   let m=sd.maintenance;
+   maintInfo=`<div class="notice" style="background:#fee2e2;border-color:#fecaca">🧹 ${t("maintNotice")}：${t("mainField")} ${m.main} · ${t("secField")} ${m.sec}</div>`;
+ }
+ // Address with Google Maps
+ let gmapUrl='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent('將軍澳寶康路109號 Tseung Kwan O Sports Ground');
+ // Official link + last updated
+ let xlsxDate=sd.xlsxDate?` · ${t("xlsxDateLabel")}：${sd.xlsxDate}`:'';
+ let xlsxFileDate=sd.xlsxFileDate?`<div style="font-size:.7rem;color:#94a3b8;margin-top:2px">${t("xlsxFileDateLabel")}：${sd.xlsxFileDate}</div>`:'';
+ let official=`<div style="text-align:center;margin-top:10px"><a href="${sd.noticeUrl||'#'}" target="_blank" rel="noopener" style="font-size:.8rem;color:#1e3a8a;text-decoration:underline">${t("viewTimetable")} →${xlsxDate}</a>${xlsxFileDate}</div>`;
+ return `<div class="card collapsed" id="sportground-card"><div class="facility-header" onclick="toggleCard(this)"><div><div class="facility-name">將軍澳運動場</div><div class="facility-address"><a href="${gmapUrl}" target="_blank" rel="noopener" style="color:#1e3a8a;text-decoration:none">將軍澳寶康路109號 📍</a> · 400m跑道</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span class="status-badge ${overall.cls}">${overall.text}</span><span class="expand-hint" data-expand="${t('expand')}" data-collapse="${t('collapse')}"></span></div></div><div class="facility-body">${closures}${maintInfo}<div class="schedule-section" style="margin-top:0;padding-top:0;border-top:none">${header}${grid}</div>${legend}${official}</div></div>`;
+}
+
 function renderRVM(){
   const now=hkNow(),nm=hkMinutes(now);
   const items=(DD.rvm||[]).map(r=>{
@@ -364,6 +451,7 @@ function renderAll(){
   if(DD.pools&&DD.pools.length)safeRender('pools',renderPools);
   if(DD.playrooms&&DD.playrooms.length)safeRender('playrooms',renderPlayrooms);
   if(DD.libraries&&DD.libraries.length)safeRender('libraries',renderLibraries);
+  if(sportGroundData)safeRender('sportground-grid',renderSportGround);
   if(DD.rvm&&DD.rvm.length)safeRender('rvm-facilities',renderRVM);
   if(DD.sports_centres&&DD.sports_centres.length)safeRender('sports-centres',renderSportsCentres);
   if(DD.tennis_courts&&DD.tennis_courts.length)safeRender('tennis-courts',renderTennisCourts);
@@ -437,7 +525,7 @@ function updateSyncAgo(){const[dd,tt]=LAST_UPDATE.split(' ');const[y,m,d]=dd.spl
 function renderFooter(){document.querySelector('#footer-updated').innerHTML=t('lastUpd')+'：<span id="lastUpdate">'+LAST_UPDATE+'</span> <span id="lastSyncAgo" style="color:#16a34a;font-weight:600"></span> · '+t('src')+'：'+(DD.data_sources||'康文署');updateSyncAgo();document.getElementById('backToTop').setAttribute('aria-label',t('backToTop'));}
 
 // Boot
-initPage();loadRVM();
+initPage();loadRVM();loadSportGround();
 setInterval(()=>{renderAll()},60000);
 setInterval(updateClock,1000);updateClock();
 document.getElementById('backToTop').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
