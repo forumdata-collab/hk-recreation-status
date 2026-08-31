@@ -304,8 +304,12 @@ function renderRVM(){
   const now=hkNow(),nm=hkMinutes(now);
   const items=(DD.rvm||[]).map(r=>{
     let cls='rvm-status-operating',txt=t('rvm_open');
-    if(rvmData&&rvmData.machines&&rvmData.machines[r.name]){const m=rvmData.machines[r.name];if(m.cat==='full'){cls='rvm-status-full';txt=t('rvm_full');}else if(m.cat==='nearly_full'){cls='rvm-status-nearly-full';txt=t('rvm_nearly_full');}else if(m.cat==='maintenance'){cls='rvm-status-maintenance';txt=t('rvm_maint');}else{cls='rvm-status-operating';txt=t('rvm_open');}}
-    else{let rng=parseRange(r.hours);let st=sessionStatus(rng,nm);cls=st.cls==='open'?'rvm-status-operating':st.cls==='soon'?'rvm-status-operating':'rvm-status-maintenance';txt=st.cls==='open'?t('rvm_open'):st.cls==='soon'?t('rvm_soon'):t('rvm_closed');if(r.hours==='24小時'){cls='rvm-status-operating';txt=t('rvm_open')}}
+    // 先計時段：非服務時間一律「非服務時間」（24小時例外）
+    let inHours=true;
+    if(r.hours!=='24小時'){const st=sessionStatus(parseRange(r.hours),nm);inHours=st.cls==='open'||st.cls==='soon';}
+    if(!inHours){cls='rvm-status-maintenance';txt=t('rvm_closed');}
+    else if(rvmData&&rvmData.machines&&rvmData.machines[r.name]){const m=rvmData.machines[r.name];if(m.cat==='full'){cls='rvm-status-full';txt=t('rvm_full');}else if(m.cat==='nearly_full'){cls='rvm-status-nearly-full';txt=t('rvm_nearly_full');}else if(m.cat==='maintenance'){cls='rvm-status-maintenance';txt=t('rvm_maint');}else{cls='rvm-status-operating';txt=t('rvm_open');}}
+    else{cls='rvm-status-operating';txt=t('rvm_open');}
     return`<div class="rvm-item"><div class="rvm-info"><div class="rvm-name">${tl('rvm',r.name)}</div><div class="rvm-address">${addrRVM(r)}</div><div class="rvm-hours">${r.hours}</div></div><span class="rvm-status ${cls}">${txt}</span></div>`;
   }).join("");
   const syncTime=rvmData?rvmData.lastSync:now.toLocaleString('zh-HK',{hour12:false}).replace(/\//g,'-');
