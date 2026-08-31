@@ -1,0 +1,722 @@
+{
+  "pools": [
+    {
+      "id": "ktswim",
+      "name": "觀塘游泳池",
+      "address": "九龍觀塘翠屏道2號",
+      "addrEn": "2 Tsui Ping Road, Kwun Tong, Kowloon",
+      "addrCn": "九龙观塘翠屏道 2 号",
+      "phone": "2717 9022 / 2347 8140",
+      "officialUrl": "https://www.lcsd.gov.hk/clpss/tc/webApp/Swimming.do?swpId=18",
+      "sessions": [
+        "06:30 - 12:00",
+        "13:00 - 18:00",
+        "19:00 - 22:00"
+      ],
+      "closures": [
+        {
+          "date": "2026/09/11",
+          "time": "07:30 - 16:00",
+          "pools": "主池",
+          "reason": "學校水運會",
+          "poolsEn": "Main pool",
+          "reasonEn": "School Swimming Gala"
+        },
+        {
+          "date": "2026/09/12",
+          "time": "07:30 - 15:00",
+          "pools": "主池",
+          "reason": "游泳比賽",
+          "poolsEn": "Main pool",
+          "reasonEn": "Competition"
+        },
+        {
+          "date": "2026/09/15",
+          "time": "07:30 - 15:00",
+          "pools": "主池",
+          "reason": "學校水運會",
+          "poolsEn": "Main pool",
+          "reasonEn": "School Swimming Gala"
+        },
+        {
+          "date": "2026/09/18",
+          "time": "07:30 - 15:00",
+          "pools": "主池",
+          "reason": "學校水運會",
+          "poolsEn": "Main pool",
+          "reasonEn": "School Swimming Gala"
+        },
+        {
+          "date": "2026/09/19",
+          "time": "07:30 - 15:00",
+          "pools": "主池",
+          "reason": "游泳比賽",
+          "poolsEn": "Main pool",
+          "reasonEn": "Competition"
+        },
+        {
+          "date": "2026/09/22",
+          "time": "07:30 - 15:00",
+          "pools": "主池",
+          "reason": "學校水運會",
+          "poolsEn": "Main pool",
+          "reasonEn": "School Swimming Gala"
+        },
+        {
+          "date": "2026/09/25",
+          "time": "07:30 - 16:00",
+          "pools": "主池",
+          "reason": "學校水運會",
+          "poolsEn": "Main pool",
+          "reasonEn": "School Swimming Gala"
+        },
+        {
+          "date": "2026/09/28",
+          "time": "07:30 - 16:00",
+          "pools": "主池",
+          "reason": "學校水運會",
+          "poolsEn": "Main pool",
+          "reasonEn": "School Swimming Gala"
+        },
+        {
+          "date": "2026/09/29",
+          "time": "07:30 - 14:00",
+          "pools": "主池",
+          "reason": "學校水運會",
+          "poolsEn": "Main pool",
+          "reasonEn": "School Swimming Gala"
+        }
+      ],
+      "maintenance": [
+        {
+          "pool": "戶外泳池",
+          "start": "11/1",
+          "end": "4/15",
+          "nextYear": true
+        },
+        {
+          "pool": "室內泳池",
+          "start": "1/2",
+          "end": "2/21",
+          "nextYear": false
+        }
+      ],
+      "cleaning": {
+        "day": "三",
+        "fallback": "五"
+      },
+      "facilities": [
+        {
+          "name": "主池",
+          "spec": "50.03米 x 25米，水深 1.4-1.9米",
+          "status": "open"
+        },
+        {
+          "name": "訓練池",
+          "spec": "25米 x 30米，水深 1.2米",
+          "status": "open"
+        },
+        {
+          "name": "副池",
+          "spec": "50米 x 21米，水深 1.1-1.4米",
+          "status": "open"
+        },
+        {
+          "name": "習泳池 1&2",
+          "spec": "25米 x 12.5米，水深 0.7-0.9米",
+          "status": "open"
+        },
+        {
+          "name": "日光浴場",
+          "spec": "戶外",
+          "status": "open"
+        }
+      ],
+      "schedule": {
+        "summer": [
+          {
+            "session": "第一節",
+            "time": "06:30 - 12:00"
+          },
+          {
+            "session": "第二節",
+            "time": "13:00 - 18:00"
+          },
+          {
+            "session": "第三節",
+            "time": "19:00 - 22:00"
+          }
+        ],
+        "cleaning": "每周大清潔：上午10時至第二節結束，第三節重開"
+      }
+    },
+    {
+      "id": "ltswim",
+      "name": "藍田游泳池",
+      "address": "九龍藍田慶田街1號藍田綜合大樓1樓",
+      "addrEn": "Lam Tin, Kowloon",
+      "addrCn": "九龙蓝田",
+      "phone": "2205 6535, 2205 6711",
+      "officialUrl": "https://www.lcsd.gov.hk/clpss/tc/webApp/Swimming.do?swpId=42",
+      "sessions": [
+        "06:30 - 12:00",
+        "13:00 - 18:00",
+        "19:00 - 22:00"
+      ],
+      "closures": [],
+      "maintenance": [
+        {
+          "pool": "全場",
+          "start": "4/16",
+          "end": "6/5",
+          "nextYear": false
+        }
+      ],
+      "cleaning": {
+        "day": "四",
+        "fallback": "一"
+      },
+      "facilities": [
+        {
+          "name": "訓練池",
+          "spec": "25米 x 25米，水深 1.2-1.4米",
+          "status": "open"
+        },
+        {
+          "name": "習泳池",
+          "spec": "25米 x 10米，水深 0.7-0.9米",
+          "status": "open"
+        },
+        {
+          "name": "日光浴場",
+          "spec": "戶外",
+          "status": "open"
+        }
+      ],
+      "schedule": {
+        "summer": [
+          {
+            "session": "第一節",
+            "time": "06:30 - 12:00"
+          },
+          {
+            "session": "第二節",
+            "time": "13:00 - 18:00"
+          },
+          {
+            "session": "第三節",
+            "time": "19:00 - 22:00"
+          }
+        ],
+        "cleaning": "每周大清潔：上午10時至第二節結束，第三節重開"
+      }
+    },
+    {
+      "id": "jvswim",
+      "name": "佐敦谷游泳池",
+      "address": "九龍牛頭角彩霞道6號",
+      "addrEn": "Jordan Valley, Kowloon",
+      "addrCn": "九龙佐敦谷",
+      "phone": "2305 5919, 2305 5920",
+      "officialUrl": "https://www.lcsd.gov.hk/clpss/tc/webApp/Swimming.do?swpId=17",
+      "sessions": [
+        "06:30 - 12:00",
+        "13:00 - 18:00",
+        "19:00 - 22:00"
+      ],
+      "closures": [
+        {
+          "date": "2026/09/01",
+          "time": "06:30 - 12:00",
+          "pools": "嬉水池 (2), 嬉水池 (3)",
+          "reason": "其他",
+          "poolsEn": "Leisure Pool (2), Leisure Pool (3)",
+          "reasonEn": "Others"
+        },
+        {
+          "date": "2026/09/01",
+          "time": "13:00 - 18:00",
+          "pools": "訓練池 , 嬉水池 (2), 嬉水池 (3)",
+          "reason": "其他",
+          "poolsEn": "Training Pool, Leisure Pool (2), Leisure Pool (3)",
+          "reasonEn": "Others"
+        },
+        {
+          "date": "2026/09/01",
+          "time": "19:00 - 22:00",
+          "pools": "嬉水池 (2), 嬉水池 (3)",
+          "reason": "其他",
+          "poolsEn": "Leisure Pool (2), Leisure Pool (3)",
+          "reasonEn": "Others"
+        }
+      ],
+      "maintenance": [
+        {
+          "pool": "全場",
+          "start": "11/1",
+          "end": "3/31",
+          "nextYear": true
+        }
+      ],
+      "cleaning": {
+        "day": "二",
+        "fallback": "四"
+      },
+      "facilities": [
+        {
+          "name": "訓練池",
+          "spec": "25米 x 11米，水深 1-1.4米",
+          "status": "open"
+        },
+        {
+          "name": "嬉水池 1",
+          "spec": "不規則形狀，水深 0.6米",
+          "status": "open"
+        },
+        {
+          "name": "嬉水池 2&3",
+          "spec": "不規則形狀，水深 0.2-0.6米",
+          "status": "open"
+        },
+        {
+          "name": "嬉水池 4",
+          "spec": "不規則形狀，水深 0.2-0.3米",
+          "status": "open"
+        }
+      ],
+      "schedule": {
+        "summer": [
+          {
+            "session": "第一節",
+            "time": "06:30 - 12:00"
+          },
+          {
+            "session": "第二節",
+            "time": "13:00 - 18:00"
+          },
+          {
+            "session": "第三節",
+            "time": "19:00 - 22:00"
+          }
+        ],
+        "cleaning": "每周大清潔：上午10時至第二節結束，第三節重開"
+      }
+    }
+  ],
+  "playrooms": [
+    {
+      "id": "playroom-kt-cwr",
+      "name": "彩榮路體育館兒童遊戲室",
+      "address": "九龍觀塘彩榮路58號",
+      "addrEn": "58 Choi Wing Road, Kwun Tong",
+      "addrCn": "九龙观塘彩荣路58号",
+      "theme": "動物王國",
+      "area": "350m²",
+      "officialUrl": "https://www.lcsd.gov.hk/clpss/tc/webApp/Facility/Details.do?ftid=15&did=6&fcid=",
+      "sessions": [
+        "早上 9:00 - 9:45",
+        "早上 10:00 - 10:45",
+        "早上 11:00 - 11:45",
+        "中午 12:00 - 12:45",
+        "下午 13:30 - 14:15",
+        "下午 14:30 - 15:15",
+        "下午 15:30 - 16:15",
+        "下午 16:30 - 17:15",
+        "晚上 18:00 - 18:45",
+        "晚上 19:00 - 19:45",
+        "晚上 20:00 - 20:45",
+        "晚上 21:00 - 21:45"
+      ],
+      "note": "保養日(每月第一及第三個星期一 09:00-15:00)首節改 15:30"
+    },
+    {
+      "id": "playroom-kt-lts",
+      "name": "藍田（南）體育館兒童遊戲室",
+      "address": "九龍觀塘藍田碧雲道170號",
+      "addrEn": "170 Pik Wan Road, Lam Tin, Kwun Tong",
+      "addrCn": "九龙观塘蓝田碧云道170号",
+      "theme": "天空",
+      "area": "130m²",
+      "officialUrl": "https://www.lcsd.gov.hk/clpss/tc/webApp/Facility/Details.do?ftid=15&did=6&fcid=",
+      "sessions": [
+        "早上 9:00 - 9:45",
+        "早上 10:00 - 10:45",
+        "早上 11:00 - 11:45",
+        "中午 12:00 - 12:45",
+        "下午 13:30 - 14:15",
+        "下午 14:30 - 15:15",
+        "下午 15:30 - 16:15",
+        "下午 16:30 - 17:15",
+        "晚上 18:00 - 18:45",
+        "晚上 19:00 - 19:45",
+        "晚上 20:00 - 20:45",
+        "晚上 21:00 - 21:45"
+      ],
+      "note": "保養日(每月第二及第四個星期三 09:00-15:00)首節改 15:30"
+    },
+    {
+      "id": "playroom-kt-lym",
+      "name": "鯉魚門體育館兒童遊戲室",
+      "address": "九龍油塘鯉魚門徑6號鯉魚門市政大廈2樓",
+      "addrEn": "2/F, Lei Yue Mun Municipal Services Building, 6 Lei Yue Mun Path, Yau Tong",
+      "addrCn": "九龙油塘鲤鱼门径6号鲤鱼门市政大厦2楼",
+      "theme": "海洋世界",
+      "area": "150m²",
+      "officialUrl": "https://www.lcsd.gov.hk/clpss/tc/webApp/Facility/Details.do?ftid=15&did=6&fcid=",
+      "sessions": [
+        "早上 9:00 - 9:45",
+        "早上 10:00 - 10:45",
+        "早上 11:00 - 11:45",
+        "中午 12:00 - 12:45",
+        "下午 13:00 - 13:45",
+        "下午 14:30 - 15:15",
+        "下午 15:30 - 16:15",
+        "下午 16:30 - 17:15",
+        "晚上 17:30 - 18:15",
+        "晚上 19:00 - 19:45",
+        "晚上 20:00 - 20:45",
+        "晚上 21:00 - 21:45"
+      ],
+      "note": "保養日(每月第二及第四個星期一 09:00-15:00)首節改 15:30"
+    },
+    {
+      "id": "playroom-kt-slb",
+      "name": "順利邨體育館兒童遊戲室",
+      "address": "九龍觀塘順利邨道33號",
+      "addrEn": "33 Shun Lee Estate Road, Kwun Tong",
+      "addrCn": "九龙观塘顺利邨道33号",
+      "theme": "森林",
+      "area": "167m²",
+      "officialUrl": "https://www.lcsd.gov.hk/clpss/tc/webApp/Facility/Details.do?ftid=15&did=6&fcid=",
+      "sessions": [
+        "早上 9:00 - 9:45",
+        "早上 10:00 - 10:45",
+        "早上 11:00 - 11:45",
+        "中午 12:00 - 12:45",
+        "下午 13:00 - 13:45",
+        "下午 14:30 - 15:15",
+        "下午 15:30 - 16:15",
+        "下午 16:30 - 17:15",
+        "晚上 17:30 - 18:15",
+        "晚上 19:00 - 19:45",
+        "晚上 20:00 - 20:45",
+        "晚上 21:00 - 21:45"
+      ],
+      "note": "保養日(每月第一及第三個星期一 09:00-15:00)首節改 15:30"
+    }
+  ],
+  "sports_centres": [
+    {
+      "id": "sc-cwr",
+      "name": "彩榮路體育館",
+      "address": "觀塘彩榮路58號",
+      "addrEn": "58 Choi Wing Road, Kwun Tong",
+      "addrCn": "观塘彩荣路58号",
+      "phone": "2721 5918",
+      "sessions": [
+        "07:00 - 23:00"
+      ],
+      "maintNote": "每月第1及第3個星期一 09:00–15:00"
+    },
+    {
+      "id": "sc-chd",
+      "name": "振華道體育館",
+      "address": "牛頭角振華道50號樂雅苑停車場頂樓",
+      "addrEn": "R/F, Lok Nga Court Carpark, 50 Chun Wah Road, Ngau Tau Kok",
+      "addrCn": "牛头角振华道50号乐雅苑停车场顶楼",
+      "phone": "2318 1767",
+      "sessions": [
+        "07:00 - 23:00"
+      ],
+      "maintNote": "每月第1及第3個星期一 09:00–15:00"
+    },
+    {
+      "id": "sc-hks",
+      "name": "曉光街體育館",
+      "address": "九龍觀塘曉光街2號",
+      "addrEn": "2 Hiu Kwong Street, Kwun Tong, Kowloon",
+      "addrCn": "九龙观塘晓光街2号",
+      "phone": "2347 0384",
+      "sessions": [
+        "07:00 - 23:00"
+      ],
+      "maintNote": "每月第2及第4個星期一 09:00–15:00"
+    },
+    {
+      "id": "sc-kwb",
+      "name": "九龍灣體育館",
+      "address": "九龍灣啟樂街15號",
+      "addrEn": "15 Kai Lok Street, Kowloon Bay",
+      "addrCn": "九龙湾启乐街15号",
+      "phone": "2750 9539",
+      "sessions": [
+        "07:00 - 23:00"
+      ],
+      "maintNote": "每月第1及第3個星期一 09:00–15:00"
+    },
+    {
+      "id": "sc-lts",
+      "name": "藍田（南）體育館",
+      "address": "九龍觀塘藍田碧雲道170號",
+      "addrEn": "170 Pik Wan Road, Lam Tin, Kwun Tong, Kowloon",
+      "addrCn": "九龙观塘蓝田碧云道170号",
+      "phone": "2379 9254",
+      "sessions": [
+        "07:00 - 23:00"
+      ]
+    },
+    {
+      "id": "sc-lym",
+      "name": "鯉魚門體育館",
+      "address": "九龍油塘鯉魚門徑6號鯉魚門市政大廈2–5樓",
+      "addrEn": "2-5/F, Lei Yue Mun Municipal Services Building, 6 Lei Yue Mun Path, Yau Tong, Kowloon",
+      "addrCn": "九龙油塘鲤鱼门径6号鲤鱼门市政大厦2–5楼",
+      "phone": "2349 3954",
+      "sessions": [
+        "07:00 - 23:00"
+      ],
+      "maintNote": "每月第2及第4個星期一 09:00–15:00"
+    },
+    {
+      "id": "sc-ntk",
+      "name": "牛頭角道體育館",
+      "address": "九龍牛頭角道183號牛頭角市政大廈2–4樓",
+      "addrEn": "2-4/F, Ngau Tau Kok Municipal Services Building, 183 Ngau Tau Kok Road, Kowloon",
+      "addrCn": "九龙牛头角道183号牛头角市政大厦2–4楼",
+      "phone": "2756 3466",
+      "sessions": [
+        "07:00 - 23:00"
+      ],
+      "maintNote": "每月第2及第4個星期一 09:00–15:00"
+    },
+    {
+      "id": "sc-shs",
+      "name": "瑞和街體育館",
+      "address": "九龍觀塘瑞和街9號瑞和街市政大廈8–9樓",
+      "addrEn": "8-9/F, Shui Wo Street Municipal Services Building, 9 Shui Wo Street, Kwun Tong, Kowloon",
+      "addrCn": "九龙观塘瑞和街9号瑞和街市政大厦8–9楼",
+      "phone": "2797 3350",
+      "sessions": [
+        "07:00 - 23:00"
+      ],
+      "maintNote": "每月第1及第3個星期一 09:00–15:00"
+    },
+    {
+      "id": "sc-slb",
+      "name": "順利邨體育館",
+      "address": "九龍觀塘順利邨道33號",
+      "addrEn": "33 Shun Lee Estate Road, Kwun Tong, Kowloon",
+      "addrCn": "九龙观塘顺利邨道33号",
+      "phone": "2951 4136",
+      "sessions": [
+        "07:00 - 23:00"
+      ],
+      "maintNote": "每月第1及第3個星期一 09:00–15:00"
+    }
+  ],
+  "tennis_courts": [
+    {
+      "id": "tc-hms",
+      "name": "曉明街網球場",
+      "address": "觀塘曉明街17號",
+      "addrEn": "17 Hiu Ming Street, Kwun Tong",
+      "addrCn": "观塘晓明街17号"
+    },
+    {
+      "id": "tc-hlp",
+      "name": "康寧道公園網球場",
+      "address": "康寧道",
+      "addrEn": "Hong Ning Road",
+      "addrCn": "康宁道"
+    },
+    {
+      "id": "tc-sfd",
+      "name": "茜發道網球場",
+      "address": "觀塘茜發道",
+      "addrEn": "Sin Fat Road, Kwun Tong",
+      "addrCn": "观塘茜发道"
+    },
+    {
+      "id": "tc-jvp",
+      "name": "佐敦谷遊樂場網球場",
+      "address": "牛頭角彩霞道",
+      "addrEn": "Choi Ha Road, Ngau Tau Kok",
+      "addrCn": "牛头角彩霞道"
+    },
+    {
+      "id": "tc-psp",
+      "name": "坪石遊樂場網球場",
+      "address": "觀塘彩石里",
+      "addrEn": "Choi Shek Lane, Kwun Tong",
+      "addrCn": "观塘彩石里"
+    },
+    {
+      "id": "tc-slp",
+      "name": "順利邨公園網球場",
+      "address": "觀塘順利邨道",
+      "addrEn": "Shun Lee Estate Road, Kwun Tong",
+      "addrCn": "观塘顺利邨道"
+    }
+  ],
+  "cycling_tracks": [
+    {
+      "id": "ct-kb",
+      "name": "九龍灣公園單車場",
+      "address": "九龍九龍灣啟禮道",
+      "addrEn": "Kai Lai Road, Kowloon Bay",
+      "addrCn": "九龙九龙湾启礼道",
+      "hours": "07:00 - 23:00",
+      "phone": "2750 0849 / 2343 6123",
+      "facilities": "洗手間、更衣室、貯物櫃、21個停車位"
+    },
+    {
+      "id": "ct-klt",
+      "name": "功樂道遊樂場單車場",
+      "address": "九龍觀塘功樂道",
+      "addrEn": "Kung Lok Road, Kwun Tong",
+      "addrCn": "九龙观塘功乐道",
+      "hours": "07:00 - 23:00",
+      "phone": "2797 3681",
+      "facilities": "洗手間"
+    }
+  ],
+  "football_pitches": [
+    {
+      "id": "fp-art",
+      "name": "人造草地足球場",
+      "type": "artificial",
+      "venues": [
+        {
+          "name": "順利邨公園",
+          "addr": "觀塘順利邨道"
+        },
+        {
+          "name": "九龍灣公園",
+          "addr": "九龍灣啟禮道"
+        }
+      ]
+    },
+    {
+      "id": "fp-nat",
+      "name": "天然草地足球場",
+      "type": "natural",
+      "venues": [
+        {
+          "name": "九龍灣運動場",
+          "addr": "九龍灣啟樂街1號"
+        },
+        {
+          "name": "晒草灣遊樂場",
+          "addr": "藍田茜發道"
+        },
+        {
+          "name": "偉樂街臨時足球場",
+          "addr": "觀塘偉樂街"
+        },
+        {
+          "name": "九龍灣公園",
+          "addr": "九龍灣啟禮道"
+        }
+      ]
+    }
+  ],
+  "other_facilities": [
+    {
+      "name": "美式桌球",
+      "nameEn": "American Billiards",
+      "nameCn": "美式台球",
+      "addr": "鯉魚門體育館（油塘鯉魚門徑6號鯉魚門市政大廈2樓）",
+      "addrEn": "2/F, Lei Yue Mun Municipal Services Building, 6 Lei Yue Mun Path, Yau Tong",
+      "addrCn": "鲤鱼门市政大厦2楼（油塘鲤鱼门径6号）"
+    },
+    {
+      "name": "攀石牆",
+      "nameEn": "Climbing Wall",
+      "nameCn": "攀岩墙",
+      "addr": "室內：鯉魚門體育館；室外：順利邨體育館",
+      "addrEn": "Indoor: Lei Yue Mun SC; Outdoor: Shun Lee Estate SC",
+      "addrCn": "室内：鲤鱼门体育馆；室外：顺利邨体育馆"
+    },
+    {
+      "name": "門球及高爾夫球發球道",
+      "nameEn": "Gateball & Golf Driving Range",
+      "nameCn": "门球及高尔夫球发球道",
+      "addr": "順利邨體育館（觀塘順利邨道）",
+      "addrEn": "Shun Lee Estate Sports Centre (Shun Lee Estate Road)",
+      "addrCn": "顺利邨体育馆（观塘顺利邨道）"
+    },
+    {
+      "name": "棒球練習場",
+      "nameEn": "Baseball Practice Area",
+      "nameCn": "棒球练习场",
+      "addr": "晒草灣遊樂場（藍田茜發道）",
+      "addrEn": "Sai Tso Wan Recreation Ground (Sin Fat Road, Lam Tin)",
+      "addrCn": "晒草湾游乐场（蓝田茜发道）"
+    },
+    {
+      "name": "單車場",
+      "nameEn": "Cycling Area",
+      "nameCn": "单车场",
+      "addr": "九龍灣公園（九龍灣啟禮道）",
+      "addrEn": "Kowloon Bay Park (Kai Lai Road)",
+      "addrCn": "九龙湾公园（九龙湾启礼道）"
+    },
+    {
+      "name": "體操訓練場",
+      "nameEn": "Gymnastics Training Area",
+      "nameCn": "体操训练场",
+      "addr": "順利邨體育館（觀塘順利邨道）",
+      "addrEn": "Shun Lee Estate Sports Centre (Shun Lee Estate Road)",
+      "addrCn": "顺利邨体育馆（观塘顺利邨道）"
+    },
+    {
+      "name": "散手訓練場",
+      "nameEn": "Karate Training Area",
+      "nameCn": "散手训练场",
+      "addr": "鯉魚門體育館（油塘鯉魚門徑6號）",
+      "addrEn": "Lei Yue Mun Sports Centre (6 Lei Yue Mun Path, Yau Tong)",
+      "addrCn": "鲤鱼门体育馆（油塘鲤鱼门径6号）"
+    }
+  ],
+  "holidays": [
+    "2026/01/01",
+    "2026/02/17",
+    "2026/02/18",
+    "2026/02/19",
+    "2026/04/03",
+    "2026/04/04",
+    "2026/04/06",
+    "2026/04/07",
+    "2026/05/01",
+    "2026/05/25",
+    "2026/06/19",
+    "2026/07/01",
+    "2026/09/26",
+    "2026/10/01",
+    "2026/10/19",
+    "2026/12/25",
+    "2026/12/26",
+    "2027/01/01",
+    "2027/02/06",
+    "2027/02/08",
+    "2027/02/09",
+    "2027/03/26",
+    "2027/03/27",
+    "2027/03/29",
+    "2027/04/05",
+    "2027/05/01",
+    "2027/05/13",
+    "2027/06/09",
+    "2027/07/01",
+    "2027/09/16",
+    "2027/10/01",
+    "2027/10/08",
+    "2027/12/25",
+    "2027/12/27"
+  ],
+  "last_update": "2026-08-31 21:15",
+  "data_sources": [
+    "康文署",
+    "觀塘區議會"
+  ]
+}

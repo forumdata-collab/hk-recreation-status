@@ -1,0 +1,20 @@
+[
+  {"id":"sk","name_zh_hant":"西貢區","name_zh_cn":"西贡区","name_en":"Sai Kung District","data_sources":["康文署","環保署"],"categories":["swimming","sportground","playroom","library","rvm"]},
+  {"id":"kt","name_zh_hant":"觀塘區","name_zh_cn":"观塘区","name_en":"Kwun Tong District","data_sources":["康文署","觀塘區議會"],"categories":["swimming","playroom","sports_centre","tennis","cycling","football","other"]},
+  {"id":"wc","name_zh_hant":"中西區","name_zh_cn":"中西区","name_en":"Central and Western District","data_sources":["康文署"],"categories":[]},
+  {"id":"wan","name_zh_hant":"灣仔區","name_zh_cn":"湾仔区","name_en":"Wan Chai District","data_sources":["康文署"],"categories":[]},
+  {"id":"e","name_zh_hant":"東區","name_zh_cn":"东区","name_en":"Eastern District","data_sources":["康文署"],"categories":[]},
+  {"id":"s","name_zh_hant":"南區","name_zh_cn":"南区","name_en":"Southern District","data_sources":["康文署"],"categories":[]},
+  {"id":"kc","name_zh_hant":"九龍城區","name_zh_cn":"九龙城区","name_en":"Kowloon City District","data_sources":["康文署"],"categories":[]},
+  {"id":"ssp","name_zh_hant":"深水埗區","name_zh_cn":"深水埗区","name_en":"Sham Shui Po District","data_sources":["康文署"],"categories":[]},
+  {"id":"wts","name_zh_hant":"黃大仙區","name_zh_cn":"黄大仙区","name_en":"Wong Tai Sin District","data_sources":["康文署"],"categories":[]},
+  {"id":"yts","name_zh_hant":"油尖旺區","name_zh_cn":"油尖旺区","name_en":"Yau Tsim Mong District","data_sources":["康文署"],"categories":[]},
+  {"id":"is","name_zh_hant":"離島區","name_zh_cn":"离岛区","name_en":"Islands District","data_sources":["康文署"],"categories":[]},
+  {"id":"tw","name_zh_hant":"荃灣區","name_zh_cn":"荃湾区","name_en":"Tsuen Wan District","data_sources":["康文署"],"categories":[]},
+  {"id":"tm","name_zh_hant":"屯門區","name_zh_cn":"屯门区","name_en":"Tuen Mun District","data_sources":["康文署"],"categories":[]},
+  {"id":"yl","name_zh_hant":"元朗區","name_zh_cn":"元朗区","name_en":"Yuen Long District","data_sources":["康文署"],"categories":[]},
+  {"id":"n","name_zh_hant":"北區","name_zh_cn":"北区","name_en":"North District","data_sources":["康文署"],"categories":[]},
+  {"id":"tp","name_zh_hant":"大埔區","name_zh_cn":"大埔区","name_en":"Tai Po District","data_sources":["康文署"],"categories":[]},
+  {"id":"st","name_zh_hant":"沙田區","name_zh_cn":"沙田区","name_en":"Shatin District","data_sources":["康文署"],"categories":[]},
+  {"id":"sf","name_zh_hant":"葵青區","name_zh_cn":"葵青区","name_en":"Kwai Tsing District","data_sources":["康文署"],"categories":[]}
+]

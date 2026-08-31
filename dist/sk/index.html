@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<title>Loading... | HK Recreation Status</title>
+<style>
+:root{
+  --primary:#0EA5E9;--primary-dark:#0284C7;--secondary:#10B981;--accent:#F97316;
+  --status-open:#22C55E;--status-closed:#EF4444;--status-maint:#F59E0B;--status-sus:#6B7280;
+  --bg-page:#F8FAFC;--bg-card:#fff;--text-1:#1E293B;--text-2:#64748B;--border:#E2E8F0;
+  --brand:#1e3a8a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg-page);color:#333;line-height:1.6;padding-top:80px}
+.container{max-width:800px;margin:0 auto;padding:0 16px}
+.top-bar{position:fixed;top:0;left:0;right:0;height:24px;background:var(--brand);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:0 16px;font-size:.68rem;z-index:1002}
+.top-bar span{white-space:nowrap}
+.thunder-banner{display:none;position:fixed;top:24px;left:0;right:0;background:linear-gradient(135deg,#facc15,#f97316);color:#422006;font-weight:700;font-size:.78rem;padding:6px 16px;z-index:1001;text-align:center;animation:thunder-flash 3s ease-in-out infinite}
+@keyframes thunder-flash{0%,100%{opacity:1}50%{opacity:.85}}
+.nav-bar{position:fixed;top:24px;left:0;right:0;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);z-index:1001;padding:6px 16px}
+section{scroll-margin-top:64px}
+.nav-inner{max-width:800px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.nav-title{font-weight:700;color:var(--brand);font-size:.95rem;white-space:nowrap}
+.lang-switch{display:flex;gap:4px}
+.lang-btn{padding:4px 10px;border-radius:6px;font-size:.75rem;font-weight:500;text-decoration:none;color:var(--text-2);background:#f1f5f9;border:1px solid var(--border);cursor:pointer}
+.lang-btn.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+header{display:none}
+header p{color:var(--text-2);font-size:.85rem;margin-top:4px}
+
+.card{background:var(--bg-card);border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.06);margin:8px 0;overflow:hidden;border:1px solid var(--border);transition:transform .18s ease,box-shadow .18s ease,opacity .3s ease}
+.card:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(0,0,0,.10)}
+@keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card{animation:cardIn .35s ease both}
+.card.collapsed .facility-body{display:none}
+.card .expand-hint{font-size:.72rem;color:var(--text-2);font-weight:500;margin-left:6px}
+.card.collapsed .expand-hint::after{content:attr(data-expand)}
+.card:not(.collapsed) .expand-hint::after{content:attr(data-collapse)}
+.facility-header{padding:14px 16px;background:#f8fafc;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer}
+.facility-header:hover{background:#f1f5f9}
+.facility-name{font-size:1rem;font-weight:700;color:var(--text-1)}
+.facility-address{font-size:.75rem;color:var(--text-2);margin-top:2px}
+.status-badge{padding:5px 12px;border-radius:999px;font-size:.75rem;font-weight:600;white-space:nowrap}
+.status-open{background:#dcfce7;color:#166534}
+.status-upcoming{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;animation:breathe 2s ease-in-out infinite}
+.status-closed{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+.status-maint{background:#fef3c7;color:#92400e;border:1px solid #fcd34d}
+@keyframes breathe{0%,100%{opacity:1}50%{opacity:.4}}
+.status-partial{background:#fef3c7;color:#92400e}
+.status-suspended{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+.code-m{background:#dc2626;color:#fff;padding:2px 6px;border-radius:4px;font-size:.7rem;font-weight:600}
+.code-b{background:#fecaca;color:#991b1b;padding:2px 6px;border-radius:4px;font-size:.7rem;font-weight:600}
+.code-a{background:#dcfce7;color:#166534;padding:2px 6px;border-radius:4px;font-size:.7rem;font-weight:600}
+.code-l{background:#fef3c7;color:#92400e;padding:2px 6px;border-radius:4px;font-size:.7rem;font-weight:600}
+.code-a-active{background:#dcfce7;color:#166534;padding:2px 6px;border-radius:4px;font-size:.7rem;font-weight:600;border:2px solid #166534;animation:breathe 2s ease-in-out infinite}
+.code-expired{background:#e2e8f0;color:#94a3b8;padding:2px 6px;border-radius:4px;font-size:.7rem;font-weight:600}
+.facility-body{padding:12px 16px}
+.detail-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:.85rem}
+.detail-row:last-child{border-bottom:none}
+.detail-label{color:var(--text-2)}
+.schedule-section{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.schedule-title{font-weight:600;color:#374151;margin-bottom:8px;font-size:.9rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.schedule-title::after{content:'▾';transition:transform .2s}
+.collapsed .schedule-title::after{transform:rotate(-90deg)}
+.session{display:flex;justify-content:space-between;padding:6px 0;font-size:.82rem;align-items:center}
+.session-time{color:#475569}
+.session-status{padding:3px 8px;border-radius:999px;font-size:.7rem;font-weight:600}
+.session-status.soon{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;animation:breathe 2s ease-in-out infinite}
+.session-status.open{background:#166534;color:#fff}
+.session-status.maint{background:#fef3c7;color:#92400e;border:1px solid #fcd34d}
+.session-status.done{background:#f1f5f9;color:#94a3b8}
+.session-status.suspended{background:#fef3c7;color:#92400e;border:1px solid #fcd34d}
+.session-bar{height:4px;border-radius:2px;margin-top:4px;width:100%;background:#f1f5f9}
+.session-bar.open{background:var(--status-open)}
+.session-bar.soon{background:var(--status-maint)}
+.session-bar.suspended{background:var(--status-sus)}
+.session-bar.done{background:#e2e8f0}
+.notice{background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:10px;margin-top:12px;font-size:.78rem;color:#92400e}
+.section-title{font-size:1.1rem;font-weight:700;color:var(--text-1);margin:12px 0 6px;padding-bottom:6px;border-bottom:2px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.section-title .toggle{font-size:.9rem;color:var(--text-2)}
+.collapsible .section-content{display:block}
+.collapsible.collapsed .section-content{display:none}
+.collapsible.collapsed .section-title .toggle::after{content:attr(data-expand)}
+.collapsible .section-title .toggle::after{content:attr(data-collapse)}
+.index-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;position:sticky;top:88px;z-index:900;background:rgba(248,250,252,.95);backdrop-filter:blur(6px);padding:8px 0;border-radius:12px}
+.index-item{padding:10px 12px;background:#fff;border:1px solid var(--border);border-radius:8px;font-size:.82rem;color:var(--brand);text-decoration:none;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04);transition:transform .15s ease,box-shadow .15s ease}
+.index-item:hover{background:var(--brand);color:#fff;transform:translateY(-2px);box-shadow:0 4px 10px rgba(30,58,138,.25)}
+.rvm-card{background:var(--bg-card);border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.06);margin:12px 0;padding:16px;border:1px solid var(--border);transition:transform .18s ease,box-shadow .18s ease}
+.rvm-card:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(0,0,0,.10)}
+.rvm-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rvm-item{display:flex;flex-direction:column;justify-content:space-between;padding:12px;border:1px solid #f1f5f9;border-radius:10px;gap:8px;background:#fafafa}
+.rvm-info{flex:1}
+.rvm-name{font-weight:600;color:var(--text-1);font-size:.85rem}
+.rvm-address{font-size:.7rem;color:var(--text-2);margin-top:2px;line-height:1.4}
+.rvm-hours{font-size:.7rem;color:#475569;margin-top:2px}
+.rvm-status{padding:4px 10px;border-radius:999px;font-size:.7rem;font-weight:600;white-space:nowrap;height:fit-content}
+.rvm-status-operating{background:#dcfce7;color:#166534}
+.rvm-status-nearly-full{background:#fef3c7;color:#92400e}
+.rvm-status-full{background:#fee2e2;color:#991b1b}
+.rvm-status-maintenance{background:#e0e7ff;color:#3730a3}
+.rvm-sync{text-align:right;font-size:.68rem;color:#94a3b8;margin-top:10px;padding-top:8px;border-top:1px solid var(--border)}
+.updated{text-align:center;color:#94a3b8;font-size:.7rem;margin:12px 0 16px}
+.back-to-top{position:fixed;bottom:20px;right:16px;width:44px;height:44px;border-radius:50%;background:var(--brand);color:#fff;border:none;cursor:pointer;box-shadow:0 4px 12px rgba(30,58,138,.4);display:none;align-items:center;justify-content:center;z-index:999}
+.back-to-top.visible{display:flex}
+@media(max-width:640px){.index-grid{grid-template-columns:1fr 1fr;top:70px}.facility-header{padding:12px}.facility-body{padding:10px 12px}.rvm-item{flex-direction:column}}
+
+.refresh-btn {
+  display: inline-block;
+  padding: 10px 24px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  font-family: inherit;
+}
+.refresh-btn:hover { background: #2563eb; }
+.refresh-btn:active { transform: scale(0.97); background: #1d4ed8; }
+</style>
+</head>
+<body>
+<div class="top-bar"><span id="topDate"></span><span id="topWeather"></span></div>
+<div class="thunder-banner" id="thunderBanner">⛈</div>
+<nav class="nav-bar"><div class="nav-inner"><div class="nav-title" id="navTitle"></div><div class="lang-switch"><a href="#" class="lang-btn active" data-lang="zh">繁體</a><a href="#" class="lang-btn" data-lang="en">EN</a><a href="#" class="lang-btn" data-lang="cn">简体</a></div></div></nav>
+
+<script>
+// === WEATHER MODULE (HKO Open Data API) ===
+let severeWarnings=[],severeWarningsEn=[],thunderWarnings=[],thunderWarningsEn=[];
+var currentLang=window.currentLang||'zh';
+function wWarn(){return currentLang==='en'?{severe:severeWarningsEn,thunder:thunderWarningsEn}:{severe:severeWarnings,thunder:thunderWarnings}}
+(function(){
+  const API='https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=tc';
+  const WARN_API_TC='https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warningInfo&lang=tc';
+  const WARN_API_EN='https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warningInfo&lang=en';
+  const ICON_BASE='https://d28gfsrd1pujc.cloudfront.net/frontend_images/mod_sp_weather/images/';
+  function parseSevere(wd){
+    const out=[];const warns=wd&&wd.warnings?wd.warnings:{};
+    for(const k in warns){const w=warns[k];if(!w)continue;if(w.status&&(w.status.includes('取消')||w.status.includes('cancelled')))continue;const name=w.name||'';if(/八號|九號|十號/.test(name)||name.includes('黑色暴雨')||/Signal No\. (8|9|10)/.test(name)||name.includes('Black Rainstorm'))out.push(name);}
+    return out;
+  }
+  function parseThunder(wd){
+    const out=[];
+    if(wd&&wd.details&&Array.isArray(wd.details)){for(const d of wd.details){const code=d.warningStatementCode||'';const stmt=(d.contents&&d.contents[0])||'';if(code==='WTS'||stmt.includes('雷暴')||stmt.includes('Thunderstorm')){if(!stmt.includes('取消')&&!stmt.includes('cancelled')){const m=stmt.match(/有效時間(?:延長)?至([^，。]*)/)||stmt.match(/until ([^,;.]*(?:\.m\.)?[^,;.]*)/i);const isEn=/[A-Za-z]/.test(stmt);const valid=m?(isEn?` (until ${m[1]})`:`（至${m[1]}）`):'';out.push(isEn?('Thunderstorm Warning'+valid):('雷暴警告'+valid));}}}}
+    const warns=wd&&wd.warnings?wd.warnings:{};for(const k in warns){const w=warns[k];if(!w)continue;if(w.status&&(w.status.includes('取消')||w.status.includes('cancelled')))continue;const name=w.name||'';if(/八號|九號|十號/.test(name)||name.includes('黑色暴雨')||name.includes('雷暴')||name.includes('Thunderstorm'))out.push(name);}
+    return out;
+  }
+  async function fetchWeather(){
+    try{const r=await fetch(API);const d=await r.json();const temps=(d.temperature?.data)||[];const hums=(d.humidity?.data)||[];const t=(temps.find(x=>x.place==='香港天文台')||temps[0]||{}).value;const h=(hums.find(x=>x.place==='香港天文台')||hums[0]||{}).value;const icon=(d.icon&&d.icon[0])||'50';const el=document.getElementById('topWeather');
+    if(el){const w=wWarn();let warnHtml='';if(w.severe.length){warnHtml+=`<span style="margin-left:8px;color:#fecaca;background:#991b1b;padding:1px 6px;border-radius:4px;font-size:.6rem;font-weight:600">⚠ ${w.severe.join('、')}</span>`;}if(w.thunder.length){warnHtml+=`<span style="margin-left:8px;display:inline-flex;align-items:center;gap:3px;background:#facc15;color:#713f12;padding:2px 8px;border-radius:4px;font-size:.65rem;font-weight:700;border:1px solid #eab308"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"/><polyline points="13 11 9 17 15 17 11 23"/></svg> ${w.thunder.join('、')}</span>`;}el.innerHTML=`<img src="${ICON_BASE}weather_${icon}.png" alt="" style="height:16px;vertical-align:middle;margin-right:4px"><span style="font-weight:700">${t??'--'}°C</span><span style="opacity:.8;margin-left:6px">💧${h??'--'}%</span>${warnHtml}`;}}catch(e){const el=document.getElementById('topWeather');if(el)el.textContent='天氣資料暫不可用';}
+    try{const[w1,w2]=await Promise.all([fetch(WARN_API_TC),fetch(WARN_API_EN)]);const[wd1,wd2]=await Promise.all([w1.json(),w2.json()]);severeWarnings=parseSevere(wd1);severeWarningsEn=parseSevere(wd2);thunderWarnings=parseThunder(wd1);thunderWarningsEn=parseThunder(wd2);}catch(e){severeWarnings=[];severeWarningsEn=[];thunderWarnings=[];thunderWarningsEn=[];}
+    const banner=document.getElementById('thunderBanner');if(banner){const w=wWarn();if(w.thunder.length){banner.style.display='block';const suffix=currentLang==='en'?' — Pools may close':' — 泳池可能暫停開放';banner.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"/><polyline points="13 11 9 17 15 17 11 23"/></svg> ⛈ ${w.thunder.join('、')}${currentLang==='en'?' in effect':'生效中'}${suffix}`;document.querySelector('.nav-bar').style.top='48px';document.body.style.paddingTop='100px';}else{banner.style.display='none';document.querySelector('.nav-bar').style.top='24px';document.body.style.paddingTop='80px';}}
+    if(typeof renderLibraries==='function'){const lb=document.getElementById('libraries');if(lb)lb.innerHTML=renderLibraries();}
+    if(typeof renderPools==='function'){const fc=document.getElementById('pools');if(fc)fc.innerHTML=renderPools();}
+  }
+  fetchWeather();setInterval(fetchWeather,600000);
+})();
+</script>
+
+<div class="container">
+<div class="index-grid" id="quickNav"></div>
+<section id="swim" class="collapsible"><h2 class="section-title" onclick="toggleSection('swim')"></h2><div class="section-content"><div id="pools"></div></div></section>
+<section id="sportground" class="collapsible"><h2 class="section-title" onclick="toggleSection('sportground')"></h2><div class="section-content"><div id="sportground-grid"></div></div></section>
+<section id="playroom" class="collapsible"><h2 class="section-title" onclick="toggleSection('playroom')"></h2><div class="section-content"><div id="playrooms"></div></div></section>
+<section id="library" class="collapsible"><h2 class="section-title" onclick="toggleSection('library')"></h2><div class="section-content"><div id="libraries"></div></div></section>
+<section id="sports" class="collapsible"><h2 class="section-title" onclick="toggleSection('sports')"></h2><div class="section-content"><div id="sports-centres"></div></div></section>
+<section id="tennis" class="collapsible"><h2 class="section-title" onclick="toggleSection('tennis')"></h2><div class="section-content"><div id="tennis-courts"></div></div></section>
+<section id="cycling" class="collapsible"><h2 class="section-title" onclick="toggleSection('cycling')"></h2><div class="section-content"><div id="cycling-tracks"></div></div></section>
+<section id="football" class="collapsible"><h2 class="section-title" onclick="toggleSection('football')"></h2><div class="section-content"><div id="football-pitches"></div></div></section>
+<section id="rvm" class="collapsible"><h2 class="section-title" onclick="toggleSection('rvm')"></h2><div class="section-content"><div id="rvm-facilities"></div></div></section>
+<section id="other" class="collapsible"><h2 class="section-title" onclick="toggleSection('other')"></h2><div class="section-content"><div id="other-facilities"></div></div></section>
+
+<div class="updated" id="footer-updated"></div>
+<div style="text-align:center;margin:8px 0"><button id="hardRefreshBtn" class="refresh-btn" onclick="location.reload(true)" title="強制重新整理 (清除快取)">🔄 強制重新整理</button></div>
+<div id="footer-links" style="text-align:center;margin:16px 0 8px;font-size:.75rem;color:#94a3b8"></div>
+</div>
+<button class="back-to-top" id="backToTop" aria-label="返回頂部">↑</button>
+
+<script>
+// === DISTRICT DATA (injected by build) ===
+var DD={"pools": [{"id": "tkoswim", "name": "將軍澳游泳池", "address": "將軍澳運隆路 9 號", "addrEn": "9 Wan Lung Road, Tseung Kwan O", "addrCn": "将军澳运隆路 9 号", "phone": "2706 7646 / 2706 6767", "officialUrl": "https://www.lcsd.gov.hk/clpss/tc/webApp/Swimming.do?swpId=35", "closures": [{"date": "2026/08/31", "time": "19:00 - 22:00", "pools": "跳水池, 戲水池, 嬉水池 1", "reason": "救生員不足", "poolsEn": "Diving Pool , Toddlers' Pool, Leisure Pool 1", "reasonEn": "Insufficient Lifeguard"}, {"date": "2026/09/18", "time": "07:30 - 17:00", "pools": "主池, 觀眾看台", "reason": "學校水運會", "poolsEn": "Main Pool , Spectator Stand", "reasonEn": "School Swimming Gala"}, {"date": "2026/09/20", "time": "08:00 - 20:00", "pools": "主池, 習泳池 1, 跳水池, 觀眾看台", "reason": "游泳比賽", "poolsEn": "Main Pool , Teaching Pool 1, Diving Pool , Spectator Stand", "reasonEn": "Competition"}, {"date": "2026/09/25", "time": "07:30 - 15:00", "pools": "主池, 觀眾看台", "reason": "學校水運會", "poolsEn": "Main Pool , Spectator Stand", "reasonEn": "School Swimming Gala"}, {"date": "2026/09/27", "time": "08:00 - 20:00", "pools": "主池, 習泳池 1, 跳水池, 觀眾看台", "reason": "游泳比賽", "poolsEn": "Main Pool , Teaching Pool 1, Diving Pool , Spectator Stand", "reasonEn": "Competition"}, {"date": "2026/09/30", "time": "07:30 - 15:00", "pools": "主池, 觀眾看台", "reason": "學校水運會", "poolsEn": "Main Pool , Spectator Stand", "reasonEn": "School Swimming Gala"}], "maintenance": [{"pool": "主池", "start": "5/4", "end": "6/23", "nextYear": false}, {"pool": "訓練池", "start": "11/1", "end": "4/15", "nextYear": true}, {"pool": "習泳池", "start": "11/1", "end": "4/15", "nextYear": true}, {"pool": "跳水池", "start": "11/1", "end": "4/15", "nextYear": true}, {"pool": "戲水池", "start": "11/1", "end": "4/15", "nextYear": true}, {"pool": "嬉水池", "start": "11/1", "end": "4/15", "nextYear": true}], "cleaning": {"day": "一", "fallback": "二"}, "facilities": [{"name": "主池", "spec": "50米 x 25米，水深 2-2.2米", "status": "open"}, {"name": "訓練池", "spec": "25米 x 12米", "status": "open"}, {"name": "習泳池 1", "spec": "20米 x 12米", "status": "open"}, {"name": "習泳池 2", "spec": "20米 x 12米", "status": "open"}, {"name": "跳水池", "spec": "12米 x 11米，水深 4.4-4.5米", "status": "open"}, {"name": "戲水池", "spec": "不規則形狀，水深 0.1-0.3米", "status": "open"}, {"name": "嬉水池 1", "spec": "不規則形狀，水深 0-0.95米", "status": "open"}, {"name": "嬉水池 2 (滑水梯)", "spec": "不規則形狀，水深 0.9-1.1米", "status": "open"}, {"name": "日光浴場", "spec": "戶外", "status": "open"}], "status": "open", "sessions": ["06:30 - 12:00", "13:00 - 18:00", "19:00 - 22:00"], "nameEn": "Tseung Kwan O Swimming Pool", "nameCn": "将军澳游泳池"}, {"id": "ktswim", "name": "觀塘游泳池", "address": "九龍觀塘翠屏道 2 號", "addrEn": "2 Tsui Ping Road, Kwun Tong, Kowloon", "addrCn": "九龙观塘翠屏道 2 号", "phone": "2717 9022 / 2347 8140", "officialUrl": "https://www.lcsd.gov.hk/clpss/tc/webApp/Swimming.do?swpId=18", "closures": [{"date": "2026/09/11", "time": "07:30 - 16:00", "pools": "主池", "reason": "學校水運會", "poolsEn": "Main pool", "reasonEn": "School Swimming Gala"}, {"date": "2026/09/12", "time": "07:30 - 15:00", "pools": "主池", "reason": "游泳比賽", "poolsEn": "Main pool", "reasonEn": "Competition"}, {"date": "2026/09/15", "time": "07:30 - 15:00", "pools": "主池", "reason": "學校水運會", "poolsEn": "Main pool", "reasonEn": "School Swimming Gala"}, {"date": "2026/09/18", "time": "07:30 - 15:00", "pools": "主池", "reason": "學校水運會", "poolsEn": "Main pool", "reasonEn": "School Swimming Gala"}, {"date": "2026/09/19", "time": "07:30 - 15:00", "pools": "主池", "reason": "游泳比賽", "poolsEn": "Main pool", "reasonEn": "Competition"}, {"date": "2026/09/22", "time": "07:30 - 15:00", "pools": "主池", "reason": "學校水運會", "poolsEn": "Main pool", "reasonEn": "School Swimming Gala"}, {"date": "2026/09/25", "time": "07:30 - 16:00", "pools": "主池", "reason": "學校水運會", "poolsEn": "Main pool", "reasonEn": "School Swimming Gala"}, {"date": "2026/09/28", "time": "07:30 - 16:00", "pools": "主池", "reason": "學校水運會", "poolsEn": "Main pool", "reasonEn": "School Swimming Gala"}, {"date": "2026/09/29", "time": "07:30 - 14:00", "pools": "主池", "reason": "學校水運會", "poolsEn": "Main pool", "reasonEn": "School Swimming Gala"}], "maintenance": [{"pool": "戶外泳池", "start": "11/1", "end": "4/15", "nextYear": true}, {"pool": "室內泳池", "start": "1/2", "end": "2/21", "nextYear": false}], "cleaning": {"day": "三", "fallback": "五"}, "facilities": [{"name": "主池", "spec": "50.03米 x 25米", "status": "open"}, {"name": "訓練池", "spec": "25米 x 30米", "status": "open"}, {"name": "副池", "spec": "50米 x 21米", "status": "open"}, {"name": "習泳池 1&2", "spec": "25米 x 12.5米", "status": "open"}, {"name": "日光浴場", "spec": "戶外", "status": "open"}], "status": "open", "sessions": ["06:30 - 12:00", "13:00 - 18:00", "19:00 - 22:00"], "nameEn": "Kwun Tong Swimming Pool", "nameCn": "观塘游泳池"}], "playrooms": [{"id": "playroom-tko1", "name": "坑口體育館兒童遊戲室", "address": "將軍澳培成路 38 號 西貢將軍澳政府綜合大樓 1 樓", "addrEn": "1/F, Sai Kung Tseung Kwan O Government Complex, 38 Pui Shing Road, Tseung Kwan O", "addrCn": "将军澳培成路 38 号 西贡将军澳政府综合大楼 1 楼", "theme": "奇妙水世界", "area": "226m²", "officialUrl": "https://www.lcsd.gov.hk/clpss/tc/webApp/Facility/Details.do?ftid=15&did=8&fcid=", "sessions": ["早上 9:00 - 9:45", "早上 10:00 - 10:45", "早上 11:30 - 12:15", "下午 12:30 - 13:15", "下午 13:30 - 14:15", "下午 15:15 - 16:00", "下午 16:15 - 17:00", "下午 18:00 - 18:45", "晚上 19:00 - 19:45", "晚上 20:00 - 20:45", "晚上 21:00 - 21:45"], "note": "保養日(每月第二及第四個星期二 07:00-13:00)首節改 13:30", "nameEn": "Hang Hau Sports Centre Playroom", "nameCn": "坑口体育馆儿童游戏室"}, {"id": "playroom-tko2", "name": "香港單車館兒童遊戲室", "address": "將軍澳寶康路 105-107 號", "addrEn": "105-107 Po Hong Road, Tseung Kwan O", "addrCn": "将军澳宝康路 105-107 号", "theme": "極限運動", "area": "286m²", "officialUrl": "https://www.lcsd.gov.hk/clpss/tc/webApp/Facility/Details.do?ftid=15&did=8&fcid=", "sessions": ["早上 9:00 - 10:00", "早上 10:15 - 11:15", "中午 12:15 - 13:15", "下午 13:30 - 14:15", "下午 14:30 - 15:30", "下午 16:30 - 17:15", "下午 17:30 - 18:30", "晚上 19:30 - 20:15", "晚上 20:30 - 21:30"], "note": "保養日(每月第一及第三個星期二 07:00-13:00)首節改 13:30", "nameEn": "Hong Kong Velodrome Playroom", "nameCn": "香港单车馆儿童游戏室"}, {"id": "playroom-tko3", "name": "調景嶺體育館兒童遊戲室", "address": "將軍澳翠嶺路 2 號", "addrEn": "2 Tsui Ling Road, Tseung Kwan O", "addrCn": "将军澳翠岭路 2 号", "theme": "海洋世界", "area": "226m²", "officialUrl": "https://www.lcsd.gov.hk/clpss/tc/webApp/Facility/Details.do?ftid=15&did=8&fcid=", "sessions": ["早上 9:00 - 9:45", "早上 10:00 - 10:45", "早上 11:30 - 12:15", "下午 12:30 - 13:15", "下午 14:15 - 15:00", "下午 15:15 - 16:00", "下午 16:15 - 17:00", "晚上 18:00 - 18:45", "晚上 19:00 - 19:45", "晚上 20:00 - 20:45", "晚上 21:00 - 21:45"], "note": "保養日(每月第二及第四個星期一 07:00-13:00)首節改 14:15", "nameEn": "Tiu Keng Leng Sports Centre Playroom", "nameCn": "调景岭体育馆儿童游戏室"}], "libraries": [{"id": "tkolib", "name": "將軍澳公共圖書館", "address": "將軍澳寶林運隆路 9 號", "addrEn": "9 Wan Lung Road, Po Lam, Tseung Kwan O", "addrCn": "将军澳宝林运隆路 9 号", "phone": "2706 7646", "officialUrl": "https://www.hkpl.gov.hk/tc/locations/sai-kung/library/tseung-kwan-o.html", "weekly": [{"day": "星期一", "time": "12:00-20:00"}, {"day": "星期二", "time": "09:00-20:00"}, {"day": "星期三", "time": "09:00-20:00"}, {"day": "星期四", "time": "09:00-20:00"}, {"day": "星期五", "time": "09:00-20:00"}, {"day": "星期六", "time": "09:00-20:00"}, {"day": "星期日", "time": "09:00-17:00"}, {"day": "公眾假期", "time": "09:00-17:00"}], "nameEn": "Tseung Kwan O Public Library", "nameCn": "将军澳公共图书馆"}, {"id": "tklib", "name": "調景嶺公共圖書館", "address": "將軍澳翠嶺路 4 號", "addrEn": "4 Chui Ling Road, Tseung Kwan O, N.T.", "addrCn": "将军澳翠岭路 4 号", "phone": "2706 7646", "officialUrl": "https://www.hkpl.gov.hk/tc/locations/sai-kung/library/tiu-keng-leng.html", "weekly": [{"day": "星期一", "time": "09:00-22:00"}, {"day": "星期二", "time": "09:00-22:00"}, {"day": "星期三", "time": "09:00-22:00"}, {"day": "星期四", "time": "12:00-22:00"}, {"day": "星期五", "time": "09:00-22:00"}, {"day": "星期六", "time": "09:00-20:00"}, {"day": "星期日", "time": "09:00-17:00"}, {"day": "公眾假期", "time": "09:00-17:00"}], "nameEn": "Tiu Keng Leng Public Library", "nameCn": "调景岭公共图书馆"}], "rvm": [{"name": "彩明商場", "addr": "調景嶺彩明街1號彩明商場一期3樓 (近 3-4號電梯)", "addrEn": "3/F, Phase 1, Choi Ming Shopping Centre, 1 Choi Ming Street, Tiu Keng Leng", "hours": "06:00-00:00"}, {"name": "新都城中心三期", "addr": "將軍澳貿業路8號1樓(近116號舖)", "addrEn": "1/F, Metro City Plaza Phase 3, 8 Mau Yip Road, Tseung Kwan O (near Shop 116)", "hours": "10:00-22:00"}, {"name": "PopCorn", "addr": "唐俊街9號 PopCorn 2 一樓(近寶盈花園天橋)", "addrEn": "1/F, PopCorn 2, 9 Tong Chun Street, Tseung Kwan O (near footbridge to Verbena Heights)", "hours": "06:00-00:00"}, {"name": "寶林商場", "addr": "寶琳北路18號3樓(智郵站旁)", "addrEn": "3/F, Po Lam Shopping Centre, 18 Po Lam Road North, Tseung Kwan O (next to iPostal)", "hours": "07:00-00:00"}, {"name": "The LOHAS", "addr": "康城路1號3樓(近336號舖)", "addrEn": "3/F, The LOHAS, 1 Lohas Park Road, Tseung Kwan O (near Shop 336)", "hours": "24小時"}, {"name": "TKO Spot", "addr": "唐明街2號1樓(近1號扶手電梯)", "addrEn": "1/F, TKO Spot, 2 Tong Ming Street, Tseung Kwan O (near Escalator 1)", "hours": "09:00-22:00"}, {"name": "怡明邨", "addr": "至善街6號怡情樓地下", "addrEn": "G/F, Yee Ching House, Yee Ming Estate, 6 Chi Shin Street, Tseung Kwan O", "hours": "07:00-22:00"}, {"name": "海悅豪園商場", "addr": "培成路18號 UG/F(近UG02-03)", "addrEn": "UG/F, Marina Garden Shopping Arcade, 18 Pui Shing Road, Tseung Kwan O (near UG02-03)", "hours": "24小時"}], "holidays": ["2026/01/01", "2026/02/17", "2026/02/18", "2026/02/19", "2026/04/03", "2026/04/04", "2026/04/06", "2026/04/07", "2026/05/01", "2026/05/25", "2026/06/19", "2026/07/01", "2026/09/26", "2026/10/01", "2026/10/19", "2026/12/25", "2026/12/26", "2027/01/01", "2027/02/06", "2027/02/08", "2027/02/09", "2027/03/26", "2027/03/27", "2027/03/29", "2027/04/05", "2027/05/01", "2027/05/13", "2027/06/09", "2027/07/01", "2027/09/16", "2027/10/01", "2027/10/08", "2027/12/25", "2027/12/27"], "last_update": "2026-08-31 20:13", "data_sources": "康文署 · 環保署", "district": {"id": "sk", "name_zh_hant": "西貢區", "name_zh_cn": "西贡区", "name_en": "Sai Kung District", "data_sources": ["康文署", "環保署"], "categories": ["swimming", "sportground", "playroom", "library", "rvm"]}, "categories": ["swimming", "sportground", "playroom", "library", "rvm"], "_nameL10n": {"tkoswim": {"zh": "將軍澳游泳池", "en": "Tseung Kwan O Swimming Pool", "cn": "将军澳游泳池"}, "ktswim": {"zh": "觀塘游泳池", "en": "Kwun Tong Swimming Pool", "cn": "观塘游泳池"}, "playroom-tko1": {"zh": "坑口體育館兒童遊戲室", "en": "Hang Hau Sports Centre Playroom", "cn": "坑口体育馆儿童游戏室"}, "playroom-tko2": {"zh": "香港單車館兒童遊戲室", "en": "Hong Kong Velodrome Playroom", "cn": "香港单车馆儿童游戏室"}, "playroom-tko3": {"zh": "調景嶺體育館兒童遊戲室", "en": "Tiu Keng Leng Sports Centre Playroom", "cn": "调景岭体育馆儿童游戏室"}}};
+
+// === I18N (union of SK + KT keys) ===
+const I18N={
+ zh:{title:"",pools:"🏊 游泳池",playrooms:"🎮 兒童遊戲室",library:"📚 圖書館",rvm:"♻️ 塑膠樽回收機",sports:"🏟️ 體育館",tennis:"🎾 網球場",football:"⚽ 足球場",cycling:"🚲 單車場",other:"🎯 其他設施",sportground:"🏟️ 運動場",open:"營運中",soon:"即將開始",done:"已結束",closed:"休館",partial:"部分開放",maint:"維修中",closed_today:"暫停開放",cleaningClosed:"暫停清潔中",rvm_open:"提供服務",rvm_soon:"即將開放",rvm_closed:"非服務時間",rvm_full:"已滿",rvm_nearly_full:"快將滿溢",rvm_maint:"維護中",hours:"開放時段",hours45:"開放時段 (每節 45-60分)",libhours:"開放時間",today:"今日",lastUpd:"最後更新",src:"數據來源",view:"查看康文署官網 →",viewLib:"查看公共圖書館官網 →",expand:"[展開 +]",collapse:"[收合 −]",sync:"最近同步",closure:"暫停開放公告",closureReason:"因",upcoming:"即將開放",mainPool:"主池",closedNote:"今日暫停",cleaningNote:"是日為清潔日，目前暫停，時間為上午10時至第二節開放時段完結為止，而泳池會於同日第三節重開。",cleaningDay:"今日為每周大清潔日",weatherWarn:"天氣警示",libMayClose:"圖書館可能暫停開放，請留意官方公告",sun:"日",mon:"一",tue:"二",wed:"三",thu:"四",fri:"五",sat:"六",holiday:"公眾假期",buyCoffee:"請我飲咖啡",contactAuthor:"聯絡作者",share:"分享",backToTop:"返回頂部",copied:"已複製",mainField:"主場",secField:"副場",todayLabel:"今天",tomorrowLabel:"明天",expiredLabel:"已結束",maintNotice:"定期保養日（即場地關閉）",viewTimetable:"查看時間表",rvmOfficialMap:"入樽機官方地圖",artificial:"人造草地",natural:"天然草地"},
+ en:{title:"",pools:"🏊 Swimming Pools",playrooms:"🎮 Children's Playrooms",library:"📚 Library",rvm:"♻️ Bottle Recycling Machines",sports:"🏟️ Sports Centres",tennis:"🎾 Tennis Courts",football:"⚽ Football Pitches",cycling:"🚲 Cycling Tracks",other:"🎯 Other Facilities",sportground:"🏟️ Sports Ground",open:"Open",soon:"Opening Soon",done:"Closed",closed:"Closed",partial:"Partially Open",maint:"Maintenance",closed_today:"Suspended",cleaningClosed:"Cleaning",rvm_open:"In Service",rvm_soon:"Opening Soon",rvm_closed:"Out of Hours",rvm_full:"Full",rvm_nearly_full:"Nearly Full",rvm_maint:"Maintenance",hours:"Opening Sessions",hours45:"Sessions (45-60 min each)",libhours:"Opening Hours",today:"Today",lastUpd:"Last updated",src:"Data",view:"View LCSD official page →",viewLib:"View library official page →",expand:"[Expand +]",collapse:"[Collapse −]",sync:"Last synced",closure:"Closure Notice",closureReason:"due to",upcoming:"Opens Soon",mainPool:"Main Pool",closedNote:"Suspended today",cleaningNote:"Cleaning day today. Pool suspended from 10:00 to end of session 2. Reopens in session 3.",cleaningDay:"Weekly cleaning day",weatherWarn:"Weather Warning",libMayClose:"Libraries may be closed — check official notices",sun:"Sun",mon:"Mon",tue:"Tue",wed:"Wed",thu:"Thu",fri:"Fri",sat:"Sat",holiday:"Public Holiday",buyCoffee:"Buy me a coffee",contactAuthor:"Contact author",share:"Share",backToTop:"Back to top",copied:"Copied",mainField:"Main Field",secField:"Secondary Field",todayLabel:"Today",tomorrowLabel:"Tomorrow",expiredLabel:"Ended",maintNotice:"Regular Maintenance (venue closed)",viewTimetable:"View Timetable",rvmOfficialMap:"Official Recycling Machine Map",artificial:"Artificial Turf",natural:"Natural Grass"},
+ cn:{title:"",pools:"🏊 游泳池",playrooms:"🎮 儿童游戏室",library:"📚 图书馆",rvm:"♻️ 塑胶瓶回收机",sports:"🏟️ 体育馆",tennis:"🎾 网球场",football:"⚽ 足球场",cycling:"🚲 单车场",other:"🎯 其他设施",sportground:"🏟️ 运动场",open:"营运中",soon:"即将开始",done:"已结束",closed:"休馆",partial:"部分开放",maint:"维修中",closed_today:"暂停开放",cleaningClosed:"暂停清洁中",rvm_open:"提供服务",rvm_soon:"即将开放",rvm_closed:"非服务时间",rvm_full:"已满",rvm_nearly_full:"快将满溢",rvm_maint:"维护中",hours:"开放时段",hours45:"开放时段 (每节 45-60分)",libhours:"开放时间",today:"今日",lastUpd:"最后更新",src:"数据来源",view:"查看康文署官网 →",viewLib:"查看公共图书馆官网 →",expand:"[展开 +]",collapse:"[收合 −]",sync:"最近同步",closure:"暂停开放公告",closureReason:"因",upcoming:"即将开放",mainPool:"主池",closedNote:"今日暂停",cleaningNote:"是日为清洁日，目前暂停，时间为上午10时至第二节开放时段完结为止，而泳池会于同日第三节重开。",cleaningDay:"今日为每周大清洁日",weatherWarn:"天气警示",libMayClose:"图书馆可能暂停开放，请留意官方公告",sun:"日",mon:"一",tue:"二",wed:"三",thu:"四",fri:"五",sat:"六",holiday:"公众假期",buyCoffee:"请我喝咖啡",contactAuthor:"联系作者",share:"分享",backToTop:"返回顶部",copied:"已复制",mainField:"主场",secField:"副场",todayLabel:"今天",tomorrowLabel:"明天",expiredLabel:"已结束",maintNotice:"定期保养日（即场地关闭）",viewTimetable:"查看时间表",rvmOfficialMap:"入樽机官方地图",artificial:"人造草地",natural:"天然草地"}
+};
+const SUB_L10N={
+  pool:{主池:"Main Pool",訓練池:"Training Pool","習泳池 1":"Teaching Pool 1","習泳池 2":"Teaching Pool 2",習泳池:"Teaching Pool",跳水池:"Diving Pool",戲水池:"Splash Pool","嬉水池 1":"Children's Pool 1","嬉水池 2 (滑水梯)":"Children's Pool 2 (Water Slide)",日光浴場:"Sunbathing Area",副池:"Secondary Pool","習泳池 1&2":"Teaching Pools 1&2","嬉水池 2&3":"Leisure Pools 2&3","嬉水池 4":"Leisure Pool 4"},
+  rvm:{彩明商場:"Choi Ming Shopping Centre","新都城中心三期":"Metro City Plaza Phase 3",PopCorn:"PopCorn",寶林商場:"Po Lam Shopping Centre","The LOHAS":"The LOHAS","TKO Spot":"TKO Spot",怡明邨:"Yee Ming Estate","海悅豪園商場":"Marina Garden Shopping Arcade"},
+  note:{"保養日(每月第二及第四個星期二 07:00-13:00)首節改 13:30":"Maintenance day (2nd & 4th Tue 07:00-13:00): first session moves to 13:30","保養日(每月第一及第三個星期二 07:00-13:00)首節改 13:30":"Maintenance day (1st & 3rd Tue 07:00-13:00): first session moves to 13:30","保養日(每月第二及第四個星期一 07:00-13:00)首節改 14:15":"Maintenance day (2nd & 4th Mon 07:00-13:00): first session moves to 14:15","保養日(每月第一及第三個星期一 09:00-15:00)首節改 15:30":"Maintenance day (1st & 3rd Mon 09:00-15:00): first session moves to 15:30","保養日(每月第二及第四個星期三 09:00-15:00)首節改 15:30":"Maintenance day (2nd & 4th Wed 09:00-15:00): first session moves to 15:30"}
+};
+var currentLang='zh';
+const t=k=>I18N[currentLang][k]||I18N.zh[k]||k;
+const lname=id=>{const d=DD._nameL10N||{};return(d[id]&&d[id][currentLang])||id;};
+const tl=(cat,k)=>{if(currentLang==='zh')return k;const m=SUB_L10N[cat];return(m&&m[k])||k;};
+const LDAY={zh:["星期日","星期一","星期二","星期三","星期四","星期五","星期六","公眾假期"],en:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Public Holiday"],cn:["星期日","星期一","星期二","星期三","星期四","星期五","星期六","公众假期"]};
+function trSession(s,lang){if(lang==='zh')return s;let m=s.match(/^(早上|中午|下午|晚上)\s*(.+)$/);if(!m)return s;let map={早上:'AM',中午:'12:00',下午:'PM',晚上:'PM'};let pre=map[m[1]]||'';return m[2]+(pre==='AM'||pre==='PM'?' '+pre:'');}
+function trDay(d,lang){if(lang==='zh')return d;let map={星期一:'Mon',星期二:'Tue',星期三:'Wed',星期四:'Thu',星期五:'Fri',星期六:'Sat',星期日:'Sun','公眾假期':'PH'};return map[d]||d;}
+function addr(f){const zh=f.address||'';const en=f.addrEn||zh;const a=currentLang==='en'?en:(currentLang==='cn'?(f.addrCn||zh):zh);const q=encodeURIComponent(zh);return`<a href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;border-bottom:1px dotted #94a3b8">${a} <small style="font-size:.6rem">📍</small></a>`;}
+function addrRVM(r){const q=encodeURIComponent(r.addr);const a=currentLang==='en'?(r.addrEn||r.addr):r.addr;return`<a href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;border-bottom:1px dotted #94a3b8">${a}</a>`;}
+
+// === CORE LOGIC ===
+const HK_HOLIDAYS=DD.holidays||[];
+function hkNow(){return new Date()}
+function hkMinutes(d){return d.getHours()*60+d.getMinutes()}
+function parseRange(s){if(!s)return null;if(s.includes("24小時"))return{start:0,end:1440};let m=s.match(/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/);if(!m)return null;let sh=parseInt(m[1]),sm=parseInt(m[2]),eh=parseInt(m[3]),em=parseInt(m[4]);let isPM=s.includes("下午")||s.includes("晚上")||s.includes("傍晚")||s.includes("晚");let isNoon=s.includes("中午");if(isPM){if(sh!==12&&sh<12)sh+=12;if(eh!==12&&eh<12)eh+=12;}else if(isNoon){if(sh===12)sh=12;if(eh<12)eh+=12;}let start=sh*60+sm,end=eh*60+em;if(end<=start)end=1440;return{start:start,end:end}}
+function sessionStatus(range,nowM){if(!range)return{text:"—",cls:"done"};if(nowM<range.start)return{text:t('soon'),cls:"soon"};if(nowM>=range.start&&nowM<range.end)return{text:t('open'),cls:"open"};return{text:t('done'),cls:"done"};}
+function facilityOverallStatus(sessions,nowM){let hasOpen=false,hasSoon=false;for(let s of sessions){let r=parseRange(s);let st=sessionStatus(r,nowM);if(st.cls==="open")hasOpen=true;if(st.cls==="soon")hasSoon=true;}if(hasOpen)return{text:t('open'),cls:"status-open"};if(hasSoon)return{text:t('soon'),cls:"status-upcoming"};return{text:t('closed'),cls:"status-closed"};}
+function toggleCard(el){el.parentElement.classList.toggle('collapsed')}
+function parseMaintNote(note){const m=note.match(/保養日\((.+?)及(.+?)個(.+?) ([0-9:]+)-([0-9]+)\)首節改 ([0-9:]+)/);if(!m)return null;const ord={第一:1,第二:2,第三:3,第四:4};const wd={星期一:1,星期二:2,星期三:3,星期四:4,星期五:5,星期六:6,星期日:0};const toMin=s=>{const[h,mm]=s.split(':').map(Number);return h*60+mm;};return{weeks:[ord[m[1]],ord[m[2]]],weekday:wd[m[3]],winEnd:toMin(m[5]),shift:toMin(m[6])};}
+function isMaintDay(obj,date){if(!obj)return false;const d=date||new Date();if(d.getDay()!==obj.weekday)return false;const off=(obj.weekday-new Date(d.getFullYear(),d.getMonth(),1).getDay()+7)%7;const occ=1+Math.floor((d.getDate()-(1+off))/7);return obj.weeks.includes(occ);}
+function inMaintenance(m,now){const y=now.getFullYear();const[sm,sd]=m.start.split('/').map(Number);const[em,ed]=m.end.split('/').map(Number);const d=now.getDate(),mo=now.getMonth()+1;if(m.nextYear){if(mo>sm||(mo===sm&&d>=sd)||mo<em||(mo===em&&d<=ed))return true;}else{if(mo>sm||(mo===sm&&d>=sd)){if(mo<em||(mo===em&&d<=ed))return true;}else if(mo===em&&d<=ed)return true;}return false;}
+function isCleaningDay(cleaning,now){if(!cleaning||!cleaning.day)return false;const CN=['日','一','二','三','四','五','六'];const todayCN=CN[now.getDay()];if(todayCN===cleaning.day)return true;if(cleaning.fallback&&todayCN===cleaning.fallback){const wd={'一':1,'二':2,'三':3,'四':4,'五':5};const w=wd[cleaning.day];if(w==null)return false;const y=now.getFullYear(),m=now.getMonth();for(let d=1;d<=31;d++){const dt=new Date(y,m,d);if(dt.getMonth()!==m)break;if(dt.getDay()===w){const ds=`${y}/${String(m+1).padStart(2,'0')}/${String(d).padStart(2,'0')}`;if(HK_HOLIDAYS.includes(ds))return true;}}}return false;}
+function poolSubStatuses(f,todayStr,now){let closedSet=new Set(),reasonMap={};const nm=hkMinutes(now);if(f.closures){f.closures.filter(c=>c.date===todayStr).forEach(c=>{const r=parseRange(c.time);if(r&&nm<r.end){const reason=currentLang==='en'?(c.reasonEn||c.reason):c.reason;c.pools.split(/[,，]/).map(s=>s.trim()).forEach(p=>{closedSet.add(p);reasonMap[p]=reason;});}});}if(f.maintenance){const alias=f.id==='ktswim'?{'戶外泳池':['副池','日光浴場'],'室內泳池':['主池','訓練池','習泳池 1&2']}:{};if(f.id==='ltswim'||f.id==='jvswim')alias['全場']=f.facilities?f.facilities.map(x=>x.name):[];f.maintenance.forEach(m=>{if(inMaintenance(m,now)){const targets=alias[m.pool]||[m.pool];targets.forEach(p=>closedSet.add(p));}});}let cleaningActive=false;if(f.cleaning&&isCleaningDay(f.cleaning,now)){const CLEAN_START=10*60;let cleanEnd=18*60;if(f.sessions&&f.sessions[1]){const r2=parseRange(f.sessions[1]);if(r2)cleanEnd=r2.end;}if(nm>=CLEAN_START&&nm<cleanEnd){(f.facilities||[]).forEach(x=>closedSet.add(x.name));cleaningActive=true;}}return(f.facilities||[]).map(x=>{if(closedSet.has(x.name)){return{...x,status:'closed',note:reasonMap[x.name]?`${t('closureReason')} ${reasonMap[x.name]}`:(cleaningActive?t('cleaningNote'):t('closedNote'))};}return x;});}
+function officialLink(url,labelKey){return url?`<a href="${url}" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:12px;padding:8px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;font-size:.78rem;color:#1e3a8a;text-decoration:none">${t(labelKey)}</a>`:'';}
+
+// === RENDER FUNCTIONS ===
+function renderPools(){
+  const now=hkNow(),nm=hkMinutes(now);
+  const FSTATUS={open:{t:t('open'),c:'open'},soon:{t:t('soon'),c:'soon'},maintenance:{t:t('maint'),c:'done'},closed:{t:t('closed_today'),c:'suspended'}};
+  const todayStr=now.toISOString().slice(0,10).replace(/-/g,'/');
+  const pools=DD.pools||[];
+  return pools.map(f=>{
+    const sessions=f.sessions||(f.schedule&&f.schedule.summer&&f.schedule.summer.map(x=>x.time))||[];
+    let st=facilityOverallStatus(sessions,nm);
+    let weatherHtml='';const ww=wWarn();if(ww.severe.length||ww.thunder.length){const allWarnings=[...ww.severe,...ww.thunder];weatherHtml=`<div class="notice" style="background:#fee2e2;border-color:#fecaca;color:#991b1b">⚠️ ${t('weatherWarn')}：${allWarnings.join('、')} — ${currentLang==='en'?'Pool may close':currentLang==='cn'?'泳池可能暫停開放':'泳池可能暫停開放'}</div>`;}
+    let closureHtml=weatherHtml;
+    if(f.closures){closureHtml+=f.closures.filter(c=>{if(c.date>todayStr)return true;if(c.date!==todayStr)return false;const cr=parseRange(c.time);return cr&&nm<cr.end}).map(c=>{const p=currentLang==='en'?(c.poolsEn||c.pools):c.pools;const r=currentLang==='en'?(c.reasonEn||c.reason):c.reason;return`<div class="notice" style="background:#fee2e2;border-color:#fecaca;color:#991b1b">⚠️ ${t('closure')}（${c.date} ${c.time}）：${p} — ${t('closureReason')} ${r}</div>`}).join('');}
+    if(f.cleaning&&isCleaningDay(f.cleaning,now)){closureHtml+=`<div class="notice" style="background:#e0e7ff;border-color:#c7d2fe;color:#3730a3">🧹 ${t('cleaningDay')}（${f.cleaning.day}${f.cleaning.fallback?' → '+f.cleaning.fallback:''}）</div>`;}
+    let subPools=poolSubStatuses(f,todayStr,now);
+    const subPoolAllClosed=subPools.length>0&&subPools.every(x=>x.status==='closed');
+    // Unified session rendering: handle both {session,time} objects and plain strings
+    let sessHtml=sessions.map(s=>{
+      const r=parseRange(typeof s==='string'?s:s.time);
+      let ss=sessionStatus(r,nm);
+      if(f.cleaning&&isCleaningDay(f.cleaning,now)){const CLEAN_START=10*60;let cleanEnd=18*60;const s2=sessions[1];if(s2){const r2=parseRange(typeof s2==='string'?s2:s2.time);if(r2)cleanEnd=r2.end;}if(r&&r.start<cleanEnd&&r.end>CLEAN_START)ss={text:t('cleaningClosed'),cls:'suspended'};}
+      if(f.closures){const crs=f.closures.filter(c=>c.date===todayStr).map(c=>parseRange(c.time)).filter(Boolean);const allAffected=crs.some(cr=>r&&r.start<cr.end&&r.end>cr.start&&nm>=cr.start&&nm<cr.end)&&subPoolAllClosed;if(allAffected&&!ss.cls.startsWith('suspended'))ss={text:t('closed_today'),cls:'suspended'};}
+      const label=typeof s==='object'&&s.session?trSession(s.session,currentLang)+' '+trSession(s.time,currentLang):trSession(typeof s==='string'?s:s.time,currentLang);
+      return`<div class="session"><span class="session-time">${label}</span><span class="session-status ${ss.cls}">${ss.text}</span></div>`;
+    }).join("");
+    if(st.cls==="soon"||st.text===t('soon'))subPools=subPools.map(x=>x.status==='open'?{...x,status:'soon'}:x);
+    const subClosed=subPools.filter(x=>x.status==='closed').length;
+    if(subClosed>0&&subClosed<subPools.length)st={text:t('partial'),cls:"status-partial"};
+    else if(subClosed===subPools.length)st={text:t('closed_today'),cls:"status-suspended"};
+    if(st.cls==="status-closed"||st.cls==="status-suspended")subPools=subPools.map(x=>({...x,status:'closed',note:x.note||t('closedNote')}));
+    let poolsHtml=subPools.map(x=>{let fs=FSTATUS[x.status]||FSTATUS.closed;return`<div class="detail-row" style="flex-direction:column;align-items:flex-start;gap:2px"><div style="display:flex;justify-content:space-between;width:100%;align-items:center"><span class="detail-label">${tl('pool',x.name)} <small style="color:#94a3b8">${x.spec}</small></span><span class="session-status ${fs.c}">${fs.t}</span></div>${x.note?`<small style="color:#92400e;font-size:.75rem;text-align:right;width:100%">${tl('note',x.note)}</small>`:''}</div>`}).join("");
+    let official=officialLink(f.officialUrl,'view');
+    return`<div class="card collapsed" id="${f.id}"><div class="facility-header" onclick="toggleCard(this)"><div><div class="facility-name">${lname(f.id)}</div><div class="facility-address">${addr(f)}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span class="status-badge ${st.cls}">${st.text}</span><span class="expand-hint" data-expand="${t('expand')}" data-collapse="${t('collapse')}"></span></div></div><div class="facility-body">${poolsHtml}<div class="schedule-section"><div class="schedule-title">${t('hours')}</div>${sessHtml}</div>${closureHtml}${official}</div></div>`;
+  }).join("");
+}
+
+function renderPlayrooms(){
+  const now=hkNow(),nm=hkMinutes(now);
+  return(DD.playrooms||[]).map(p=>{
+    let maint=parseMaintNote(p.note);let isMaint=isMaintDay(maint);let maintNow=isMaint&&nm<maint.shift;
+    let st=maintNow?{text:t('maint'),cls:'status-maint'}:facilityOverallStatus(p.sessions,nm);
+    let html=p.sessions.map(s=>{let r=parseRange(s);let ss=sessionStatus(r,nm);if(isMaint&&r&&r.start<maint.shift){ss={text:t('maint'),cls:'maint'};}return`<div class="session"><span class="session-time">${trSession(s,currentLang)}</span><span class="session-status ${ss.cls}">${ss.text}</span></div>`}).join("");
+    let official=officialLink(p.officialUrl,'view');
+    return`<div class="card collapsed" id="${p.id}"><div class="facility-header" onclick="toggleCard(this)"><div><div class="facility-name">${lname(p.id)}</div><div class="facility-address">${addr(p)} · ${p.theme} · ${p.area}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span class="status-badge ${st.cls}">${st.text}</span><span class="expand-hint" data-expand="${t('expand')}" data-collapse="${t('collapse')}"></span></div></div><div class="facility-body"><div class="schedule-section"><div class="schedule-title">${t('hours45')}</div>${html}</div><div class="notice">${tl('note',p.note)}</div>${official}</div></div>`;
+  }).join("");
+}
+
+function renderLibraries(){
+  const now=hkNow();let day=now.getDay();let today=LDAY[currentLang][day];
+  return(DD.libraries||[]).map(l=>{
+    let todayRow=l.weekly.find(w=>w.day===LDAY.zh[day]);let nm=hkMinutes(now);let r=todayRow?parseRange(todayRow.time):null;
+    let st=r?sessionStatus(r,nm):{text:t('closed'),cls:"status-closed"};
+    let badgeCls=st.cls==="open"?"status-open":st.cls==="soon"?"status-upcoming":"status-closed";
+    let badgeText=st.text===t('open')?t('open'):st.text;
+    let rows=l.weekly.map(w=>{let isToday=w.day===LDAY.zh[day];return`<div class="session" style="${isToday?'background:#f0fdf4;border-radius:6px;padding:6px 8px':''}"><span class="session-time">${trDay(w.day,currentLang)} ${w.time}${isToday?' ← '+t('today'):''}</span><span class="session-status ${isToday?st.cls:'done'}">${isToday?badgeText:''}</span></div>`}).join("");
+    let official=officialLink(l.officialUrl,'viewLib');
+    let warnHtml='';const lw=wWarn();if(lw.severe.length){warnHtml=`<div class="notice" style="background:#fee2e2;border-color:#fecaca;color:#991b1b">⚠️ ${t('weatherWarn')}：${lw.severe.join('、')} — ${t('libMayClose')}</div>`;}
+    return`<div class="card collapsed" id="${l.id}"><div class="facility-header" onclick="toggleCard(this)"><div><div class="facility-name">${lname(l.id)}</div><div class="facility-address">${addr(l)}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span class="status-badge ${badgeCls}">${badgeText}</span><span class="expand-hint" data-expand="${t('expand')}" data-collapse="${t('collapse')}"></span></div></div><div class="facility-body"><div class="schedule-section"><div class="schedule-title">${t('libhours')}</div>${rows}</div>${warnHtml}${official}</div></div>`;
+  }).join("");
+}
+
+let rvmData=null;
+async function loadRVM(){try{const r=await fetch('rvm_status.json');if(r.ok)rvmData=await r.json();}catch(e){}renderAll();}
+function renderRVM(){
+  const now=hkNow(),nm=hkMinutes(now);
+  const items=(DD.rvm||[]).map(r=>{
+    let cls='rvm-status-operating',txt=t('rvm_open');
+    if(rvmData&&rvmData.machines&&rvmData.machines[r.name]){const m=rvmData.machines[r.name];if(m.cat==='full'){cls='rvm-status-full';txt=t('rvm_full');}else if(m.cat==='nearly_full'){cls='rvm-status-nearly-full';txt=t('rvm_nearly_full');}else if(m.cat==='maintenance'){cls='rvm-status-maintenance';txt=t('rvm_maint');}else{cls='rvm-status-operating';txt=t('rvm_open');}}
+    else{let rng=parseRange(r.hours);let st=sessionStatus(rng,nm);cls=st.cls==='open'?'rvm-status-operating':st.cls==='soon'?'rvm-status-operating':'rvm-status-maintenance';txt=st.cls==='open'?t('rvm_open'):st.cls==='soon'?t('rvm_soon'):t('rvm_closed');if(r.hours==='24小時'){cls='rvm-status-operating';txt=t('rvm_open')}}
+    return`<div class="rvm-item"><div class="rvm-info"><div class="rvm-name">${tl('rvm',r.name)}</div><div class="rvm-address">${addrRVM(r)}</div><div class="rvm-hours">${r.hours}</div></div><span class="rvm-status ${cls}">${txt}</span></div>`;
+  }).join("");
+  const syncTime=rvmData?rvmData.lastSync:now.toLocaleString('zh-HK',{hour12:false}).replace(/\//g,'-');
+  return`<div class="rvm-card"><div class="rvm-grid">${items}</div><div class="rvm-sync">${t('sync')}：${syncTime}</div><div style="text-align:center;margin-top:8px"><a href="https://www.hkrvms3.com.hk/hk/" target="_blank" rel="noopener" style="font-size:.75rem;color:#1e3a8a;text-decoration:underline">hkrvms3.com.hk — ${t("rvmOfficialMap")} ↗</a></div></div>`;
+}
+
+function renderSportsCentres(){
+  const now=hkNow(),nm=hkMinutes(now);
+  return(DD.sports_centres||[]).map(f=>{
+    let st=facilityOverallStatus(f.sessions,nm);
+    let notice='';if(f.maintNotice){notice=`<div class="notice">🔧 ${currentLang==='en'?'Maintenance':currentLang==='cn'?'保养':'保養'}：${f.maintNotice}</div>`;}
+    let sessions=f.sessions.map(s=>{let r=parseRange(s);let ss=sessionStatus(r,nm);return`<div class="session"><span class="session-time">${s}</span><span class="session-status ${ss.cls}">${ss.text}</span></div>`}).join("");
+    return`<div class="card collapsed" id="${f.id}"><div class="facility-header" onclick="toggleCard(this)"><div><div class="facility-name">${lname(f.id)}</div><div class="facility-address">${addr(f)}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span class="status-badge ${st.cls}">${st.text}</span><span class="expand-hint" data-expand="${t('expand')}" data-collapse="${t('collapse')}"></span></div></div><div class="facility-body"><div class="schedule-section"><div class="schedule-title">${t('hours')}</div>${sessions}</div>${notice}</div></div>`;
+  }).join("");
+}
+
+function renderTennisCourts(){
+  const now=hkNow(),nm=hkMinutes(now);
+  return(DD.tennis_courts||[]).map(f=>{
+    const st=facilityOverallStatus(["07:00 - 23:00"],nm);
+    return`<div class="card collapsed" id="${f.id}"><div class="facility-header" onclick="toggleCard(this)"><div><div class="facility-name">${lname(f.id)}</div><div class="facility-address">${addr(f)}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span class="status-badge ${st.cls}">${st.text}</span><span class="expand-hint" data-expand="${t('expand')}" data-collapse="${t('collapse')}"></span></div></div><div class="facility-body"><div class="detail-row"><span class="detail-label">${t('hours')}</span><span>07:00 - 23:00</span></div></div></div>`;
+  }).join("");
+}
+
+function renderCyclingTracks(){
+  const now=hkNow(),nm=hkMinutes(now);
+  return(DD.cycling_tracks||[]).map(f=>{
+    const st=facilityOverallStatus([f.hours],nm);
+    const a=currentLang==='en'?(f.addrEn||f.addr):(currentLang==='cn'?(f.addrCn||f.addr):f.addr);
+    return`<div class="card collapsed" id="${f.id}"><div class="facility-header" onclick="toggleCard(this)"><div><div class="facility-name">${f.name}</div><div class="facility-address">${a}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span class="status-badge ${st.cls}">${st.text}</span><span class="expand-hint" data-expand="${t('expand')}" data-collapse="${t('collapse')}"></span></div></div><div class="facility-body"><div class="detail-row"><span class="detail-label">${t('hours')}</span><span>${f.hours}</span></div><div class="detail-row"><span class="detail-label">${currentLang==='en'?'Phone':currentLang==='cn'?'电话':'電話'}</span><span>${f.phone}</span></div><div class="detail-row"><span class="detail-label">${currentLang==='en'?'Facilities':currentLang==='cn'?'設施':'設施'}</span><span>${f.facilities}</span></div></div></div>`;
+  }).join("");
+}
+
+function renderFootballPitches(){
+  return(DD.football_pitches||[]).map(f=>{
+    const venues=f.venues.map(v=>`<div class="detail-row"><span class="detail-label">• ${v.name}</span><span style="font-size:.78rem;color:#64748b">${v.addr}</span></div>`).join("");
+    return`<div class="card collapsed" id="${f.id}"><div class="facility-header" onclick="toggleCard(this)"><div><div class="facility-name">${lname(f.id)}</div><div class="facility-address">${currentLang==='en'?(f.type==='artificial'?'Artificial Turf':'Natural Grass'):(currentLang==='cn'?(f.type==='artificial'?'人造草地':'天然草地'):(f.type==='artificial'?'人造草地':'天然草地'))}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span class="expand-hint" data-expand="${t('expand')}" data-collapse="${t('collapse')}"></span></div></div><div class="facility-body">${venues}</div></div>`;
+  }).join("");
+}
+
+function renderOtherFacilities(){
+  return(DD.other_facilities||[]).map(f=>{
+    const nm=currentLang==='en'?(f.nameEn||f.name):(currentLang==='cn'?(f.nameCn||f.name):f.name);
+    const a=currentLang==='en'?(f.addrEn||f.addr):(currentLang==='cn'?(f.addrCn||f.addr):f.addr);
+    return`<div class="card collapsed"><div class="facility-header" onclick="toggleCard(this)"><div><div class="facility-name">${nm}</div><div class="facility-address">${a}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span class="expand-hint" data-expand="${t('expand')}" data-collapse="${t('collapse')}"></span></div></div><div class="facility-body"></div></div>`;
+  }).join("");
+}
+
+// === SAFE RENDER + RENDER ALL ===
+function safeRender(elId,fn){const el=document.getElementById(elId);if(!el)return;try{el.innerHTML=fn();}catch(e){console.error(elId,e);if(!el.innerHTML.trim())el.innerHTML='<div class="notice" style="color:#b45309">⚠️ 數據暫時無法顯示</div>';}}
+function renderAll(){
+  if(DD.pools&&DD.pools.length)safeRender('pools',renderPools);
+  if(DD.playrooms&&DD.playrooms.length)safeRender('playrooms',renderPlayrooms);
+  if(DD.libraries&&DD.libraries.length)safeRender('libraries',renderLibraries);
+  if(DD.rvm&&DD.rvm.length)safeRender('rvm-facilities',renderRVM);
+  if(DD.sports_centres&&DD.sports_centres.length)safeRender('sports-centres',renderSportsCentres);
+  if(DD.tennis_courts&&DD.tennis_courts.length)safeRender('tennis-courts',renderTennisCourts);
+  if(DD.cycling_tracks&&DD.cycling_tracks.length)safeRender('cycling-tracks',renderCyclingTracks);
+  if(DD.football_pitches&&DD.football_pitches.length)safeRender('football-pitches',renderFootballPitches);
+  if(DD.other_facilities&&DD.other_facilities.length)safeRender('other-facilities',renderOtherFacilities);
+  const cards=document.querySelectorAll('.card');cards.forEach((c,i)=>{c.style.animationDelay=(i*0.06)+'s';c.style.animation='cardIn .35s ease both';});
+  updateClock();
+}
+
+// === INIT ===
+const LAST_UPDATE=DD.last_update||'--';
+const CATEGORY_MAP={
+  swimming:{section:'swim',el:null,labelKey:'pools',icon:'🏊'},
+  sportground:{section:'sportground',el:'sportground-grid',labelKey:'sportground',icon:'🏟️'},
+  playroom:{section:'playroom',el:'playrooms',labelKey:'playrooms',icon:'🎮'},
+  library:{section:'library',el:'libraries',labelKey:'library',icon:'📚'},
+  rvm:{section:'rvm',el:'rvm-facilities',labelKey:'rvm',icon:'♻️'},
+  sports_centre:{section:'sports',el:'sports-centres',labelKey:'sports',icon:'🏟️'},
+  tennis:{section:'tennis',el:'tennis-courts',labelKey:'tennis',icon:'🎾'},
+  cycling:{section:'cycling',el:'cycling-tracks',labelKey:'cycling',icon:'🚲'},
+  football:{section:'football',el:'football-pitches',labelKey:'football',icon:'⚽'},
+  other:{section:'other',el:'other-facilities',labelKey:'other',icon:'🎯'}
+};
+const CATEGORY_COUNTS={
+  swimming:DD.pools?DD.pools.length:0,
+  sportground:sportGroundData?1:0,
+  playroom:DD.playrooms?DD.playrooms.length:0,
+  library:DD.libraries?DD.libraries.length:0,
+  rvm:DD.rvm?DD.rvm.length:0,
+  sports_centre:DD.sports_centres?DD.sports_centres.length:0,
+  tennis:DD.tennis_courts?DD.tennis_courts.length:0,
+  cycling:DD.cycling_tracks?DD.cycling_tracks.length:0,
+  football:DD.football_pitches?DD.football_pitches.length:0,
+  other:DD.other_facilities?DD.other_facilities.length:0
+};
+
+function initPage(){
+  const dist=DD.district||{};
+  const title=(dist.name_zh_hant||'')+'康樂設施運作情況';
+  document.getElementById('navTitle').textContent=title;
+  document.title=title+' | HK Recreation Status';
+  document.querySelector('meta[name="description"]').content=(dist.name_zh_hant||'')+'康樂設施即時運作狀態';
+
+  // Build quickNav
+  const cats=DD.categories||[];
+  const quickNav=document.getElementById('quickNav');
+  quickNav.innerHTML=cats.filter(c=>CATEGORY_COUNTS[c]>0).map(c=>{
+    const m=CATEGORY_MAP[c];if(!m)return'';
+    const label=t(m.labelKey);
+    return`<a href="#${m.section}" class="index-item">${m.icon} ${label} (${CATEGORY_COUNTS[c]})</a>`;
+  }).join('');
+
+  // Show/hide sections + set titles
+  for(const[c,m]of Object.entries(CATEGORY_MAP)){
+    const sec=document.getElementById(m.section);
+    if(!sec)continue;
+    if(CATEGORY_COUNTS[c]>0){sec.style.display='';sec.querySelector('h2').innerHTML=t(m.labelKey)+' <span class="toggle"></span>';}
+    else sec.style.display='none';
+  }
+
+  // Footer
+  document.querySelector('#footer-updated').innerHTML=t('lastUpd')+'：<span id="lastUpdate">'+LAST_UPDATE+'</span> <span id="lastSyncAgo" style="color:#16a34a;font-weight:600"></span> · '+t('src')+'：'+(DD.data_sources||'康文署');
+  document.querySelector('#footer-links').innerHTML='<a href="https://ko-fi.com/forumdata" target="_blank" rel="noopener" style="color:#f59e0b;text-decoration:none">☕ '+t('buyCoffee')+'</a>';
+  updateSyncAgo();
+}
+
+function updateClock(){const now=hkNow();const y=now.getFullYear();const mon=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][now.getMonth()];const d=now.getDate();const wd=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][now.getDay()];const hh=String(now.getHours()).padStart(2,'0');const mm=String(now.getMinutes()).padStart(2,'0');document.getElementById('topDate').textContent=`${y}-${mon}-${d} (${wd}) ${hh}:${mm}`;}
+function toggleSection(id){document.getElementById(id).classList.toggle('collapsed');}
+function updateSyncAgo(){const[dd,tt]=LAST_UPDATE.split(' ');const[y,m,d]=dd.split('-').map(Number);const[hh,mm]=tt.split(':').map(Number);const syncTime=new Date(y,m-1,d,hh,mm);const diff=Math.floor((Date.now()-syncTime)/60000);const ago=diff<1?'剛剛':diff<60?diff+'分鐘前':diff<1440?Math.floor(diff/60)+'小時前':Math.floor(diff/1440)+'天前';const el=document.getElementById('lastSyncAgo');if(el)el.textContent='('+ago+')';}
+function renderFooter(){document.querySelector('#footer-updated').innerHTML=t('lastUpd')+'：<span id="lastUpdate">'+LAST_UPDATE+'</span> <span id="lastSyncAgo" style="color:#16a34a;font-weight:600"></span> · '+t('src')+'：'+(DD.data_sources||'康文署');updateSyncAgo();document.getElementById('backToTop').setAttribute('aria-label',t('backToTop'));}
+
+// Boot
+initPage();loadRVM();
+setInterval(()=>{renderAll()},60000);
+setInterval(updateClock,1000);updateClock();
+document.getElementById('backToTop').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
+document.querySelectorAll('.index-item').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const el=document.getElementById(a.getAttribute('href').slice(1));if(el){const off=88+document.getElementById('quickNav').getBoundingClientRect().height+8;window.scrollTo({top:el.getBoundingClientRect().top+scrollY-off,behavior:'smooth'});}}));
+window.addEventListener('scroll',()=>{document.getElementById('backToTop').classList.toggle('visible',window.scrollY>300)});
+document.querySelectorAll('.lang-btn').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();currentLang=b.dataset.lang;document.querySelectorAll('.lang-btn').forEach(x=>x.classList.toggle('active',x===b));document.documentElement.lang=currentLang==='zh'?'zh-HK':currentLang==='cn'?'zh-CN':'en';initPage();renderAll();const ww=wWarn();const banner=document.getElementById('thunderBanner');if(banner&&ww.thunder.length){banner.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"/><polyline points="13 11 9 17 15 17 11 23"/></svg> ⛈ ${ww.thunder.join('、')}${currentLang==='en'?' in effect':'生效中'}${currentLang==='en'?' — Pools may close':' — 泳池可能暫停開放'}`;}}));
+</script>
+</body>
+</html>

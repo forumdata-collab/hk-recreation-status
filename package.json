@@ -1,0 +1,12 @@
+{
+  "name": "hk-recreation-status",
+  "version": "1.0.0",
+  "description": "Hong Kong 18 District Leisure Facilities Status",
+  "scripts": {
+    "extract": "python3 scripts/extract_data.py",
+    "validate": "python3 scripts/validate.py",
+    "build": "python3 scripts/build.py",
+    "serve": "python3 -m http.server 8080 -d dist"
+  },
+  "license": "MIT"
+}
