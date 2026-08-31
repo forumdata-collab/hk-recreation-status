@@ -289,6 +289,8 @@ function renderLibraries(){
   return(DD.libraries||[]).map(l=>{
     let todayRow=l.weekly.find(w=>w.day===LDAY.zh[day]);let nm=hkMinutes(now);let r=todayRow?parseRange(todayRow.time):null;
     let st=r?sessionStatus(r,nm):{text:t('closed'),cls:"status-closed"};
+    // 是日已結束（時段完結後）→ 休館，同泳池/運動場一致
+    if(st.cls==="done") st={text:t('closed'),cls:"status-closed"};
     let badgeCls=st.cls==="open"?"status-open":st.cls==="soon"?"status-upcoming":"status-closed";
     let badgeText=st.text===t('open')?t('open'):st.text;
     let rows=l.weekly.map(w=>{let isToday=w.day===LDAY.zh[day];return`<div class="session" style="${isToday?'background:#f0fdf4;border-radius:6px;padding:6px 8px':''}"><span class="session-time">${trDay(w.day,currentLang)} ${w.time}${isToday?' ← '+t('today'):''}</span><span class="session-status ${isToday?st.cls:'done'}">${isToday?badgeText:''}</span></div>`}).join("");
