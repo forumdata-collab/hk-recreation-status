@@ -140,9 +140,26 @@ function wWarn(){return currentLang==='en'?{severe:severeWarningsEn,thunder:thun
   const WARN_API_EN='https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warningInfo&lang=en';
   const ICON_BASE='https://d28gfsrd1pujc.cloudfront.net/frontend_images/mod_sp_weather/images/';
   function parseSevere(wd){
-    const out=[];const warns=wd&&wd.warnings?wd.warnings:{};
-    for(const k in warns){const w=warns[k];if(!w)continue;if(w.status&&(w.status.includes('取消')||w.status.includes('cancelled')))continue;const name=w.name||'';if(/八號|九號|十號/.test(name)||name.includes('黑色暴雨')||/Signal No\. (8|9|10)/.test(name)||name.includes('Black Rainstorm'))out.push(name);}
-    return out;
+    const out=[];
+    // New API format: wd.details[] with warningStatementCode
+    if(wd&&wd.details&&Array.isArray(wd.details)){
+      for(const d of wd.details){
+        const code=d.warningStatementCode||'';
+        const stmt=(d.contents&&d.contents[0])||'';
+        if(!stmt||stmt.includes('取消')||stmt.includes('cancelled')) continue;
+        // T1/T3 standby signals
+        if(code==='WTCSGNL'){
+          const m=stmt.match(/(一號戒備信號|三號強風信號|八號.*?信號|九號.*?信號|十號.*?信號)/);
+          if(m) out.push(m[1]);
+        }
+        // Black rainstorm
+        if(code==='WRAINSA' || stmt.includes('黑色暴雨')) out.push('黑色暴雨警告');
+      }
+    }
+    // Legacy format fallback
+    const warns=wd&&wd.warnings?wd.warnings:{};
+    for(const k in warns){const w=warns[k];if(!w)continue;if(w.status&&(w.status.includes('取消')||w.status.includes('cancelled')))continue;const name=w.name||'';if(/八號|九號|十號/.test(name)||name.includes('黑色暴雨')||/Signal No\\. (8|9|10)/.test(name)||name.includes('Black Rainstorm'))out.push(name);}
+    return [...new Set(out)];
   }
   function parseThunder(wd){
     const out=[];
