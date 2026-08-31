@@ -139,6 +139,19 @@ function wWarn(){return currentLang==='en'?{severe:severeWarningsEn,thunder:thun
   const WARN_API_TC='https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warningInfo&lang=tc';
   const WARN_API_EN='https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warningInfo&lang=en';
   const ICON_BASE='https://d28gfsrd1pujc.cloudfront.net/frontend_images/mod_sp_weather/images/';
+  const WARN_MAP={
+    WRAINA:['黃色暴雨警告','Amber Rainstorm Warning'],
+    WRAINR:['紅色暴雨警告','Red Rainstorm Warning'],
+    WRAINB:['黑色暴雨警告','Black Rainstorm Warning'],
+    WHOT:['酷熱天氣警告','Very Hot Weather Warning'],
+    WCOLD:['寒冷天氣警告','Cold Weather Warning'],
+    WFROST:['霜凍警告','Frost Warning'],
+    WDS:['強烈季候風信號','Strong Monsoon Signal'],
+    WFIRE:['火災危險警告','Fire Danger Warning'],
+    WL:['山泥傾瀉警告','Landslip Warning'],
+    WTMW:['海嘯警告','Tsunami Warning'],
+    WFNTSA:['新界北部水浸特別報告','Special Announcement on Flooding in the northern New Territories']
+  };
   function parseSevere(wd){
     const out=[];
     // New API format: wd.details[] with warningStatementCode
@@ -147,16 +160,18 @@ function wWarn(){return currentLang==='en'?{severe:severeWarningsEn,thunder:thun
         const code=d.warningStatementCode||'';
         const stmt=((d.contents||[]).join('\n'))||'';
         if(!stmt||stmt.includes('取消')||stmt.includes('cancelled')) continue;
-        // T1/T3 standby signals
+        // T1-T10 standby signals (zh + en)
         if(code==='WTCSGNL'){
           const m=stmt.match(/(一號戒備信號|三號強風信號|八號.*?信號|九號.*?信號|十號.*?信號)/);
           if(m) out.push(m[1]);
-          // EN: "The Standby Signal, No. 1 is in force."
           const me=stmt.match(/(Standby Signal|Strong Wind Signal|Gale or Storm Signal|Increasing Gale or Storm Signal|Hurricane Signal),?\s*No\.\s*([0-9]+)/);
           if(me) out.push('Signal No. '+me[2]);
         }
-        // Black rainstorm
-        if(code==='WRAINSA' || stmt.includes('黑色暴雨')) out.push('黑色暴雨警告');
+        // 其他警告（黃/紅/黑雨、酷熱、寒冷、霜凍、季候風、火災、山泥、海嘯、水浸）
+        else if(WARN_MAP[code]){
+          const hasCJK=/[\u4e00-\u9fff]/.test(stmt);
+          out.push(hasCJK?WARN_MAP[code][0]:WARN_MAP[code][1]);
+        }
       }
     }
     // Legacy format fallback
