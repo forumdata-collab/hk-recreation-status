@@ -145,7 +145,7 @@ function wWarn(){return currentLang==='en'?{severe:severeWarningsEn,thunder:thun
     if(wd&&wd.details&&Array.isArray(wd.details)){
       for(const d of wd.details){
         const code=d.warningStatementCode||'';
-        const stmt=(d.contents&&d.contents[0])||'';
+        const stmt=((d.contents||[]).join('\n'))||'';
         if(!stmt||stmt.includes('取消')||stmt.includes('cancelled')) continue;
         // T1/T3 standby signals
         if(code==='WTCSGNL'){
